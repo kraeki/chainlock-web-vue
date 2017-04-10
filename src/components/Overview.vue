@@ -55,6 +55,9 @@
 
 <script>
 import RentButton from './RentButton'
+import RentableService from '../services/EthereumRentableService'
+import RentableDiscoveryService from '../services/EthereumRentableDiscoveryService'
+const rentableService = new RentableService('http://localhost:8545', new RentableDiscoveryService())
 
 export default {
   name: 'overview',
@@ -63,23 +66,7 @@ export default {
     return {
       msg: 'Welcome to Your Vue.js App',
       value: '',
-      tableData3: [{
-        name: 'Locker1',
-        address: '0x000',
-        owner: 'Tom',
-        deposit: '500 ether',
-        prize: '5 ether per minute',
-        description: 'This glorious locker is famous for its nice nuki lock mechanismus.',
-        rented: true
-      }, {
-        name: 'Locker2',
-        address: '0x001',
-        owner: 'Tom',
-        deposit: '300 ether',
-        prize: '6 ether per minute',
-        description: 'This is a description of the locker 2, which is bla.',
-        rented: false
-      }]
+      tableData3: rentableService.getLockers()
     }
   },
   methods: {
