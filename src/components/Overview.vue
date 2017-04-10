@@ -33,20 +33,18 @@
 
           <el-switch
             v-if="props.row.rented"
-            width="90"
+            v-bind:width="90"
             v-model="value"
             on-color="#13ce66"
             off-color="#ff4949"
             on-text="unlocked"
             off-text="locked">
           </el-switch>
-          <el-button
+          <rent-button
             v-if="!props.row.rented"
-            v-on:click="rent"
-            type="primary"
-            size="small">
-            Rent
-          </el-button>
+            v-bind:contract-address="props.row.address"
+            v-on:close="rentEvent"
+          />
 
         </template>
       </el-table-column>
@@ -56,17 +54,18 @@
 </template>
 
 <script>
-import Web3 from '../services/Web3'
-const web3Service = new Web3()
+import RentButton from './RentButton'
 
 export default {
   name: 'overview',
+  components: {RentButton},
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
       value: '',
       tableData3: [{
         name: 'Locker1',
+        address: '0x000',
         owner: 'Tom',
         deposit: '500 ether',
         prize: '5 ether per minute',
@@ -74,6 +73,7 @@ export default {
         rented: true
       }, {
         name: 'Locker2',
+        address: '0x001',
         owner: 'Tom',
         deposit: '300 ether',
         prize: '6 ether per minute',
@@ -83,10 +83,19 @@ export default {
     }
   },
   methods: {
-    rent: function (event) {
-      web3Service.rent()
+    rentEvent: function (state) {
+      if (state === 'success') {
+        this.$message({
+          message: 'Congrats, this is a success message.',
+          type: state
+        })
+      } else if (state === 'error') {
+        this.$message({
+          message: 'Congrats, this is a success message.',
+          type: state
+        })
+      }
     }
-
   }
 }
 </script>

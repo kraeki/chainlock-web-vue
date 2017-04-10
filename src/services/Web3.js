@@ -9,8 +9,4 @@ export default class Web3Service {
       web3 = new Web3(new Web3.providers.HttpProvider(addr))
     }
   }
-
-  rent () {
-    alert('rent')
-  }
 }
