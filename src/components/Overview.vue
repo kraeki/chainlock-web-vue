@@ -42,6 +42,7 @@
           </el-switch>
           <el-button
             v-if="!props.row.rented"
+            v-on:click="rent"
             type="primary"
             size="small">
             Rent
@@ -55,6 +56,9 @@
 </template>
 
 <script>
+import Web3 from '../services/Web3'
+const web3Service = new Web3()
+
 export default {
   name: 'overview',
   data () {
@@ -77,6 +81,12 @@ export default {
         rented: false
       }]
     }
+  },
+  methods: {
+    rent: function (event) {
+      web3Service.rent()
+    }
+
   }
 }
 </script>
