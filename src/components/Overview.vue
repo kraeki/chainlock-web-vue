@@ -2,7 +2,7 @@
   <div class="hello">
     <h1>Overview</h1>
     <el-table
-      :data="tableData3"
+      :data="lockers"
       style="width: 100%">
       <el-table-column type="expand">
         <template scope="props">
@@ -31,15 +31,11 @@
       <el-table-column label="Action">
         <template scope="props">
 
-          <el-switch
+          <lock-unlock-button
             v-if="props.row.rented"
-            v-bind:width="90"
-            v-model="value"
-            on-color="#13ce66"
-            off-color="#ff4949"
-            on-text="unlocked"
-            off-text="locked">
-          </el-switch>
+            v-bind:contract-address="props.row.address"
+            v-on:onSwitch="onSwitch"
+          />
           <rent-button
             v-if="!props.row.rented"
             v-bind:contract-address="props.row.address"
@@ -55,18 +51,18 @@
 
 <script>
 import RentButton from './RentButton'
+import LockUnlockButton from './LockUnlockButton'
 import RentableService from '../services/EthereumRentableService'
 import RentableDiscoveryService from '../services/EthereumRentableDiscoveryService'
-const rentableService = new RentableService('http://localhost:8545', new RentableDiscoveryService())
+const discoveryService = new RentableDiscoveryService('http://localhost:8545', '0x4cbee4df58c717f47a5e6e8d305a450fcdbe1e24')
+const rentableService = new RentableService('http://localhost:8545', '0x03f92c229e49286420e70824d5f043ec26fb498d', 'hirzel', discoveryService)
 
 export default {
   name: 'overview',
-  components: {RentButton},
+  components: {RentButton, LockUnlockButton},
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App',
-      value: '',
-      tableData3: rentableService.getLockers()
+      lockers: rentableService.getLockers()
     }
   },
   methods: {
@@ -82,6 +78,9 @@ export default {
           type: state
         })
       }
+    },
+    onSwitch: function (obj) {
+      rentableService.sendCommand(obj.contractAddress, obj.lock ? 'lock' : 'unlock')
     }
   }
 }
