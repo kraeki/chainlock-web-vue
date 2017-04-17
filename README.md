@@ -26,5 +26,9 @@ npm run e2e
 # run all tests
 npm test
 ```
+## configure webapp
+Change constructors of RentableDiscoveryService and RentableService in Overview.vue:
+const discoveryService = new RentableDiscoveryService('http://localhost:8545', '0x4cbee4df58c717f47a5e6e8d305a450fcdbe1e24')
+const rentableService = new RentableService('http://localhost:8545', '0x03f92c229e49286420e70824d5f043ec26fb498d', 'hirzel', discoveryService)
 
 For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
