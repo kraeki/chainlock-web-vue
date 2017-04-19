@@ -34,7 +34,7 @@
           <lock-unlock-button
             v-if="props.row.rented"
             v-bind:contract-address="props.row.address"
-            v-on:onSwitch="onSwitch"
+            v-on:onSwitchEvent="onSwitchEvent"
           />
           <rent-button
             v-if="!props.row.rented"
@@ -54,8 +54,13 @@ import RentButton from './RentButton'
 import LockUnlockButton from './LockUnlockButton'
 import RentableService from '../services/EthereumRentableService'
 import RentableDiscoveryService from '../services/EthereumRentableDiscoveryService'
-const discoveryService = new RentableDiscoveryService('http://localhost:8545', '0x4cbee4df58c717f47a5e6e8d305a450fcdbe1e24')
-const rentableService = new RentableService('http://localhost:8545', '0x03f92c229e49286420e70824d5f043ec26fb498d', 'hirzel', discoveryService)
+const discoveryService = new RentableDiscoveryService('http://localhost:8545', '0xde93b2965af6a49161f597604c600af9ea07883a')
+
+// config
+const userAddress = '0xe0a83a8b5ba5c9acc140f89296187f96a163cf43'
+const userPassword = ''
+
+const rentableService = new RentableService('http://localhost:8545', userAddress, userPassword, discoveryService)
 
 export default {
   name: 'overview',
@@ -79,8 +84,8 @@ export default {
         })
       }
     },
-    onSwitch: function (obj) {
-      rentableService.sendCommand(obj.contractAddress, obj.lock ? 'lock' : 'unlock')
+    onSwitchEvent: function (data) {
+      rentableService.sendCommand(data.contractAddress, data.locked ? 'lock' : 'unlock')
     }
   }
 }

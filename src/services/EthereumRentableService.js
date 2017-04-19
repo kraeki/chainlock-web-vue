@@ -53,15 +53,13 @@ export default class EthereumRentableService {
     var digest = this.sign(this.address, this.passphrase, messageBytes)
     var whisperMessage = { 'digest': digest, 'message': message }
 
-    var success = this.web3.shh.post({
+    return this.web3.shh.post({
       'from': this.whisperIdentity,
       'topics': [this.web3.fromAscii('rentable'), this.web3.fromAscii(rentableAddress)],
       'payload': this.web3.fromAscii(JSON.stringify(whisperMessage)),
       'ttl': 100,
       'priority': 1000
     })
-
-    alert((success ? 'sent' : 'fail') + '!')
   }
 
   sign (from, passphrase, bytes) {

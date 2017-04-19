@@ -6,7 +6,7 @@
       off-color="#ff4949"
       on-text="unlocked"
       off-text="locked"
-      v-on:change="switchEvent">
+      v-on:change="onSwitchEvent">
     </el-switch>
 </template>
 
@@ -19,8 +19,8 @@
       }
     },
     methods: {
-      switchEvent: function (newState) {
-        this.$emit('onSwitch', { 'locked': !newState, 'contractAddress': this.contractAddress })
+      onSwitchEvent: function (newState) {
+        this.$emit('onSwitchEvent', { 'locked': !newState, 'contractAddress': this.contractAddress })
       }
     },
     data () {
