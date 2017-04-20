@@ -45,7 +45,11 @@
       }
     },
     data () {
-      return { }
+      return {
+        dialogFormVisible: false,
+        formLabelWidth: '',
+        form: ''
+      }
     }
   }
 </script>

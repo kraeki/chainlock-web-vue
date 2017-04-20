@@ -1,12 +1,12 @@
 <template>
   <el-switch
       v-bind:width="90"
-      v-model="value"
+      v-model="toggleValue"
       on-color="#13ce66"
       off-color="#ff4949"
       on-text="unlocked"
       off-text="locked"
-      v-on:change="onSwitchEvent">
+      @change="onChange">
     </el-switch>
 </template>
 
@@ -16,16 +16,19 @@
     props: {
       contractAddress: {
         type: String
+      },
+      initialState: {
+        type: Boolean
       }
     },
     methods: {
-      onSwitchEvent: function (newState) {
-        this.$emit('onSwitchEvent', { 'locked': !newState, 'contractAddress': this.contractAddress })
+      onChange: function (newState) {
+        this.$emit('lockUnlock', { 'contractAddress': this.contractAddress, 'locked': !newState })
       }
     },
     data () {
       return {
-        value: ''
+        toggleValue: this.initialState
       }
     }
   }

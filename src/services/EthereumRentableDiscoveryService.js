@@ -7,13 +7,18 @@ export default class EthereumRentableDiscoveryService {
     this.web3 = new Web3(new Web3.providers.HttpProvider(url))
     this.discoveryContract = this.web3.eth.contract(EthereumRentableDiscoveryService.abi)
     this.discovery = this.discoveryContract.at(discoveryAddress)
+    this.rentables = []
   }
 
   addRentable (address) {
-    this.data.push(address)
+    this.rentables.push(address) // todo: add rentable to blckchain
+  }
+
+  loadRentables () {
+    this.rentables = this.discovery.all()
   }
 
   allRentables () {
-    return this.discovery.all()
+    return this.rentables
   }
 }

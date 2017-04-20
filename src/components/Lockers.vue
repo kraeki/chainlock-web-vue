@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <h1>Overview</h1>
+    <h1>Lockers</h1>
     <el-table
       :data="lockers"
       style="width: 100%">
@@ -26,7 +26,7 @@
           </table>
         </template>
       </el-table-column>
-      <el-table-column label="Rentable" prop="name">
+      <el-table-column label="Rentable" prop="address" width="500px">
       </el-table-column>
       <el-table-column label="Action">
         <template scope="props">
@@ -34,12 +34,13 @@
           <lock-unlock-button
             v-if="props.row.rented"
             v-bind:contract-address="props.row.address"
-            v-on:onSwitchEvent="onSwitchEvent"
+            v-bind:initial-state="true"
+            @lockUnlock="onLockUnlock"
           />
           <rent-button
             v-if="!props.row.rented"
             v-bind:contract-address="props.row.address"
-            v-on:close="rentEvent"
+            @close="rentEvent"
           />
 
         </template>
@@ -52,22 +53,16 @@
 <script>
 import RentButton from './RentButton'
 import LockUnlockButton from './LockUnlockButton'
-import RentableService from '../services/EthereumRentableService'
-import RentableDiscoveryService from '../services/EthereumRentableDiscoveryService'
-const discoveryService = new RentableDiscoveryService('http://localhost:8545', '0xde93b2965af6a49161f597604c600af9ea07883a')
-
-// config
-const userAddress = '0xe0a83a8b5ba5c9acc140f89296187f96a163cf43'
-const userPassword = ''
-
-const rentableService = new RentableService('http://localhost:8545', userAddress, userPassword, discoveryService)
 
 export default {
-  name: 'overview',
+  name: 'Lockers',
+  props: {
+    lockers: Array
+  },
   components: {RentButton, LockUnlockButton},
   data () {
     return {
-      lockers: rentableService.getLockers()
+
     }
   },
   methods: {
@@ -79,13 +74,13 @@ export default {
         })
       } else if (state === 'error') {
         this.$message({
-          message: 'Congrats, this is a success message.',
+          message: 'Sad, this is a fail message.',
           type: state
         })
       }
     },
-    onSwitchEvent: function (data) {
-      rentableService.sendCommand(data.contractAddress, data.locked ? 'lock' : 'unlock')
+    onLockUnlock: function (obj) {
+      this.$emit('lockUnlock', obj)
     }
   }
 }

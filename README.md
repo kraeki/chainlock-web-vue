@@ -27,8 +27,15 @@ npm run e2e
 npm test
 ```
 ## configure webapp
-Change constructors of RentableDiscoveryService and RentableService in Overview.vue:
-const discoveryService = new RentableDiscoveryService('http://localhost:8545', '0x4cbee4df58c717f47a5e6e8d305a450fcdbe1e24')
-const rentableService = new RentableService('http://localhost:8545', '0x03f92c229e49286420e70824d5f043ec26fb498d', 'hirzel', discoveryService)
+### in code:
+Change constructors of RentableDiscoveryService and RentableService in Lockers.vue:
+``` javascript
+const discoveryService = new RentableDiscoveryService('http://localhost:8545', '<discovery address>')
+const rentableService = new RentableService('http://localhost:8545', '<account address>', '<passhprase>')
+```
+
+### abi IMPORTANT
+This will not work if diregarded!<br /><br />
+The private fields "abi" in RentableService and RentableDiscoveryService do NOT work if the abi is taken from "truffle console". Instead, go to build/contracts/Rentable.json and take the "abi" attribute of that json file (same for RentableDiscovery).
 
 For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
