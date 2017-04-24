@@ -1,6 +1,8 @@
 <template>
   <div class="hello">
-    <h1>Rentables</h1>
+    <h1 style="display:inline">Rentables</h1>
+    <el-button type="primary" icon="upload" @click="refreshRentables" />
+    <add-rentable style="display:inline" @addRentable="addRentable" />
     <el-table
       :data="rentables"
       style="width: 100%">
@@ -43,7 +45,7 @@
           <rent-button
             v-if="!props.row.rented"
             v-bind:contract-address="props.row.address"
-            @close="rentEvent"
+            @rent="rentEvent"
           />
         </template>
       </el-table-column>
@@ -55,6 +57,7 @@
 <script>
 import RentButton from './RentButton'
 import LockUnlockButton from './LockUnlockButton'
+import AddRentable from '@/components/AddRentable'
 
 export default {
   name: 'Rentables',
@@ -62,26 +65,22 @@ export default {
     rentables: Array,
     currentUser: String
   },
-  components: {RentButton, LockUnlockButton},
+  components: {RentButton, LockUnlockButton, AddRentable},
   data () {
     return {}
   },
   methods: {
-    rentEvent: function (state) {
-      if (state === 'success') {
-        this.$message({
-          message: 'Congrats, this is a success message.',
-          type: state
-        })
-      } else if (state === 'error') {
-        this.$message({
-          message: 'Sad, this is a fail message.',
-          type: state
-        })
-      }
+    rentEvent: function (data) {
+      this.$emit('rent', data)
     },
     onLockUnlock: function (obj) {
       this.$emit('lockUnlock', obj)
+    },
+    refreshRentables: function () {
+      this.$emit('refreshRentables')
+    },
+    addRentable: function (obj) {
+      this.$emit('addRentable', obj)
     }
   }
 }

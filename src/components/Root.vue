@@ -14,9 +14,12 @@
     <div class='body_container'>
       <rentables
         v-if='initialized'
-        v-bind:rentables='rentables'
+        v-bind:rentables='this.rentables'
         v-bind:currentUser='userAddress'
         @lockUnlock='lockUnlock'
+        @rent='rent'
+        @refreshRentables='refreshRentables'
+        @addRentable='addRentable'
       />
     </div>
   </div>
@@ -34,9 +37,6 @@ var rentableService
 var discoveryService
 
 function getRentables () {
-  if (!(rentableService && discoveryService)) {
-    return []
-  }
   var rentables = discoveryService.allRentables()
   return rentables.map(function (rentableAddress) {
     var contract = rentableService.rentableFromAddress(rentableAddress)
@@ -78,7 +78,7 @@ export default {
 
         rentableService = new RentableService(this.ethereumNodeUrl, this.userAddress, this.passphrase)
         if (rentableService.unlock()) {
-          discoveryService = new RentableDiscoveryService(this.ethereumNodeUrl, this.discoveryAddress)
+          discoveryService = new RentableDiscoveryService(rentableService, this.discoveryAddress)
           discoveryService.loadRentables()
           this.rentables = getRentables()
           this.initialized = true
@@ -97,6 +97,30 @@ export default {
       } else {
 
       }
+    },
+    rent: function (obj) {
+      var self = this
+      rentableService.rent(obj.contractAddress, obj.start, obj.end, function (error, d) {
+        if (error) {
+          self.$message({
+            message: 'could not rent!',
+            type: 'error'
+          })
+        } else {
+          self.$message({
+            message: 'successfully rented!',
+            type: 'success'
+          })
+          this.refreshRentables()
+        }
+      })
+    },
+    refreshRentables: function () {
+      this.rentables = getRentables()
+      this.$message('loaded rentables')
+    },
+    addRentable: function (obj) {
+      discoveryService.newRentable(obj.description, obj.location, obj.pricePerSecond, obj.deposit)
     }
   }
 }

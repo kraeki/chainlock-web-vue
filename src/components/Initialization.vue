@@ -1,5 +1,5 @@
 <template>
-  <div display="inline">
+  <div>
     <el-button
       @click="dialogFormVisible = true"
       type="primary"
@@ -7,7 +7,7 @@
 
     <el-dialog title="Ethereum Node Settings" v-model="dialogFormVisible"
       :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false"
-      @close="cancel" id>
+      @close="cancel">
       <el-form>
         <el-form-item label="node url">
           <el-input placeholder="http://nodeurl:8545" v-model="ethereumNodeUrl" @change="inputChanged" />

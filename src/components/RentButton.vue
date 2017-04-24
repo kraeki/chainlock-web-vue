@@ -6,16 +6,13 @@
       size="small">
     Rent ({{contractAddress}})
     </el-button>
-    <el-dialog title="Shipping address" v-model="dialogFormVisible">
+    <el-dialog title="Rent" v-model="dialogFormVisible">
       <el-form :model="form">
-        <el-form-item label="Promotion name" :label-width="formLabelWidth">
-          <el-input v-model="form.name" auto-complete="off"></el-input>
+        <el-form-item label="start time">
+          <el-input v-model="form.start" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="Zones" :label-width="formLabelWidth">
-          <el-select v-model="form.region" placeholder="Please select a zone">
-            <el-option label="Zone No.1" value="shanghai"></el-option>
-            <el-option label="Zone No.2" value="beijing"></el-option>
-          </el-select>
+        <el-form-item label="end time">
+          <el-input v-model="form.end" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -37,18 +34,23 @@
     methods: {
       cancel: function () {
         this.dialogFormVisible = false
-        this.$emit('close', 'cancel')
+        // this.$emit('close', 'cancel')
       },
       confirm: function () {
         this.dialogFormVisible = false
-        this.$emit('close', 'success')
+        // this.$emit('close', 'success')
+        var data = {contractAddress: this.contractAddress, start: this.form.start, end: this.form.end}
+        this.$emit('rent', data)
       }
     },
     data () {
       return {
         dialogFormVisible: false,
         formLabelWidth: '',
-        form: ''
+        form: {
+          start: Math.floor(new Date().getTime() / 1000),
+          end: Math.floor(new Date().getTime() / 1000)
+        }
       }
     }
   }
