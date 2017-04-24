@@ -12,7 +12,12 @@ export default class EthereumRentableService {
   }
 
   unlock () {
-    this.web3.personal.unlockAccount(this.address, this.passphrase)
+    try {
+      this.web3.personal.unlockAccount(this.address, this.passphrase)
+      return true
+    } catch (error) {
+      return false
+    }
   }
 
   lock () {

@@ -1,8 +1,8 @@
 <template>
   <div class="hello">
-    <h1>Lockers</h1>
+    <h1>Rentables</h1>
     <el-table
-      :data="lockers"
+      :data="rentables"
       style="width: 100%">
       <el-table-column type="expand">
         <template scope="props">
@@ -26,11 +26,14 @@
           </table>
         </template>
       </el-table-column>
-      <el-table-column label="Rentable" prop="address" width="500px">
+      <el-table-column label="Rentable" width="500px">
+        <template scope="props">
+        <el-label v-if="props.row.owner === currentUser"><b>{{props.row.address}}</b></el-label>
+        <el-label v-else>{{props.row.address}}</el-label>
+        </template>
       </el-table-column>
       <el-table-column label="Action">
         <template scope="props">
-
           <lock-unlock-button
             v-if="props.row.rented"
             v-bind:contract-address="props.row.address"
@@ -42,7 +45,6 @@
             v-bind:contract-address="props.row.address"
             @close="rentEvent"
           />
-
         </template>
       </el-table-column>
     </el-table>
@@ -55,9 +57,10 @@ import RentButton from './RentButton'
 import LockUnlockButton from './LockUnlockButton'
 
 export default {
-  name: 'Lockers',
+  name: 'Rentables',
   props: {
-    lockers: Array
+    rentables: Array,
+    currentUser: String
   },
   components: {RentButton, LockUnlockButton},
   data () {

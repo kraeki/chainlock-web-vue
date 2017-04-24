@@ -28,7 +28,7 @@ npm test
 ```
 ## configure webapp
 ### in code:
-Change constructors of RentableDiscoveryService and RentableService in Lockers.vue:
+Change constructors of RentableDiscoveryService and RentableService in Rentables.vue:
 ``` javascript
 const discoveryService = new RentableDiscoveryService('http://localhost:8545', '<discovery address>')
 const rentableService = new RentableService('http://localhost:8545', '<account address>', '<passhprase>')
