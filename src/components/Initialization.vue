@@ -1,22 +1,30 @@
 <template>
-  <div class="hello">
-    <h1>Initialize</h1>
-    <div width="50%">
-      <el-input placeholder="http://nodeurl:8545" v-model="ethereumNodeUrl" @change="inputChanged">
-        <template slot="prepend">Node Url</template>
-      </el-input>
-      <el-input placeholder="0x0000000000000000000000000000000000000000" v-model="discoveryAddress" @change="inputChanged">
-        <template slot="prepend">Discovery</template>
-      </el-input>
-      <el-input placeholder="0x0000000000000000000000000000000000000000" v-model="userAddress" @change="inputChanged">
-        <template slot="prepend" width="100px">User Address</template>
-      </el-input>
-      <el-input placeholder="secret" v-model="passphrase" @change="inputChanged">
-        <template slot="prepend">Passphrase</template>
-      </el-input>
-      <el-button type="primary" v-if="!initialized" :disabled="!allSet" @click="initButtonClick">Initialize</el-button>
-      <el-button type="primary" v-if="initialized" :disabled="!initialized" @click="uninitButtonClick">UN-Initialize</el-button>
-    </div>
+  <div>
+    <el-button
+      @click="dialogFormVisible = true"
+      type="primary"
+      icon="setting" />
+
+    <el-dialog title="Ethereum Node Settings" v-model="dialogFormVisible">
+      <el-form :model="settings">
+        <el-form-item label="node url">
+          <el-input placeholder="http://nodeurl:8545" v-model="settings.ethereumNodeUrl" @change="inputChanged" />
+        </el-form-item>
+        <el-form-item label="discovery">
+          <el-input placeholder="0x0000000000000000000000000000000000000000" v-model="settings.discoveryAddress" @change="inputChanged" />
+        </el-form-item>
+        <el-form-item label="user adi">
+          <el-input placeholder="0x0000000000000000000000000000000000000000" v-model="settings.userAddress" @change="inputChanged" />
+        </el-form-item>
+        <el-form-item label="secret">
+          <el-input placeholder="secret" v-model="settings.passphrase" @change="inputChanged" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancel">Cancel</el-button>
+        <el-button type="primary" @click="confirm" :disabled="!allSet">Confirm</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -28,35 +36,39 @@ export default {
   components: {},
   data () {
     return {
+      dialogFormVisible: false,
       allSet: false,
-      ethereumNodeUrl: 'http://localhost:8545',
-      discoveryAddress: '0x4cbee4df58c717f47a5e6e8d305a450fcdbe1e24',
-      userAddress: '0x03f92c229e49286420e70824d5f043ec26fb498d',
-      passphrase: '',
+      settings: {
+        ethereumNodeUrl: 'http://localhost:8545',
+        discoveryAddress: '0x4cbee4df58c717f47a5e6e8d305a450fcdbe1e24',
+        userAddress: '0x03f92c229e49286420e70824d5f043ec26fb498d',
+        passphrase: ''
+      },
       initialized: false
     }
   },
   methods: {
-    initButtonClick () {
+    confirm () {
       if (this.allSet) {
         var data = {
-          'ethereumNodeUrl': this.ethereumNodeUrl,
-          'discoveryAddress': this.discoveryAddress,
-          'userAddress': this.userAddress,
-          'passphrase': this.passphrase
+          'ethereumNodeUrl': this.settings.ethereumNodeUrl,
+          'discoveryAddress': this.settings.discoveryAddress,
+          'userAddress': this.settings.userAddress,
+          'passphrase': this.settings.passphrase
         }
         this.initialized = true
+        this.dialogFormVisible = false
         this.$emit('init', true, data)
       }
     },
-    uninitButtonClick () {
+    cancel () {
       this.initialized = false
+      this.dialogFormVisible = false
       this.$emit('init', false, {})
     },
     inputChanged () {
-      this.allSet = this.discovery !== '' && this.me !== '' && this.passphrase !== '' && this.ethereumNodeUrl !== ''
+      this.allSet = this.settings.discoveryAddress !== '' && this.settings.userAddress !== '' && this.settings.passphrase !== '' && this.settings.ethereumNodeUrl !== ''
       this.initialized = false
-      this.$emit('init', false, {})
     }
   }
 }

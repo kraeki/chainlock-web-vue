@@ -61,9 +61,7 @@ export default {
   },
   components: {RentButton, LockUnlockButton},
   data () {
-    return {
-
-    }
+    return {}
   },
   methods: {
     rentEvent: function (state) {

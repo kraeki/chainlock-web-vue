@@ -19,11 +19,15 @@ export default class EthereumRentableService {
     this.web3.personal.lockAccount(this.address)
   }
 
-  newRentable (description, location, price, deposit) {
+  newRentable (description, location, price, deposit, callback) {
     var gas = this.web3.eth.estimateGas() // todo: better approximate gas?
     var gasPrice = 100 // todo: what about gas price?
     this.unlock()
-    this.rentableContract.new(description, location, price, deposit, { from: this.address, gas: gas, gasPrice: gasPrice })
+    this.rentableContract.new(description, location, price, deposit,
+      { from: this.address, gas: gas, gasPrice: gasPrice },
+      function (error, contract) {
+        callback(error, contract)
+      })
     this.lock()
   }
 
