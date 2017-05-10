@@ -9,7 +9,7 @@ export default class EthereumRentableService {
     this.ethereumNodeAddress = ethereumNodeAddress
     this.web3 = new Web3(new Web3.providers.HttpProvider(ethereumNodeAddress))
     this.rentableContract = this.web3.eth.contract(EthereumRentableService.abi)
-    this.whisperIdentity = this.web3.shh.newIdentity()
+    // this.whisperIdentity = this.web3.shh.newIdentity()
   }
 
   unlock () {
@@ -44,7 +44,7 @@ export default class EthereumRentableService {
   }
 
   sendCommand (rentableAddress, command) {
-    var message = { 'command': command, 'rentableAddress': rentableAddress, 'whisperIdentity': this.whisperIdentity } // IMPORTANT: alphabetical order to ensure consistency when using ecRecover!
+    /* var message = { 'command': command, 'rentableAddress': rentableAddress, 'whisperIdentity': this.whisperIdentity } // IMPORTANT: alphabetical order to ensure consistency when using ecRecover!
     var messageBytes = this.web3.fromAscii(JSON.stringify(message))
     var digest = this.sign(this.address, this.passphrase, messageBytes)
     var whisperMessage = { 'digest': digest, 'message': message }
@@ -55,7 +55,7 @@ export default class EthereumRentableService {
       'payload': this.web3.fromAscii(JSON.stringify(whisperMessage)),
       'ttl': 100,
       'priority': 1000
-    })
+    }) */
   }
 
   sign (from, passphrase, bytes) {

@@ -43,7 +43,7 @@ function getRentables () {
     return {
       owner: contract.owner(),
       deposit: contract.deposit() + '',
-      prize: contract.costPerSecond() + ' wei per second',
+      cost: contract.costPerSecond() + ' wei per second',
       description: contract.description(),
       rented: contract.currentRenter() === rentableService.address,
       address: contract.address
@@ -60,8 +60,8 @@ export default {
       rentables: [],
       initialized: false,
       ethereumNodeUrl: 'http://localhost:8545',
-      discoveryAddress: '0x4cbee4df58c717f47a5e6e8d305a450fcdbe1e24',
-      userAddress: '0x03f92c229e49286420e70824d5f043ec26fb498d',
+      discoveryAddress: '0x427fa84fcf9c8852d27f48f53267395fbf7af349',
+      userAddress: '0x55047206d03afef0d79bb2d90710bf9f23737860',
       passphrase: ''
     }
   },
@@ -111,7 +111,7 @@ export default {
             message: 'successfully rented!',
             type: 'success'
           })
-          this.refreshRentables()
+          // this.refreshRentables()
         }
       })
     },

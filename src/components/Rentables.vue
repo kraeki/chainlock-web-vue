@@ -18,8 +18,8 @@
               <td>{{ props.row.deposit }}</td>
             </tr>
             <tr>
-              <td>Prize</td>
-              <td>{{ props.row.prize }}</td>
+              <td>Cost</td>
+              <td>{{ props.row.cost }}</td>
             </tr>
             <tr>
               <td>Description</td>
