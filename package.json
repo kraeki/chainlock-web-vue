@@ -17,7 +17,7 @@
     "element-ui": "^1.2.8",
     "vue": "^2.2.2",
     "vue-router": "^2.3.0",
-    "web3": "^0.18.4"
+    "web3": "file:./web3.js"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.2",
