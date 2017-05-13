@@ -5,11 +5,16 @@ import Vue from 'vue'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 
+import VueResource from 'vue-resource'
+
 import App from './App'
 import router from './router'
 
 Vue.use(ElementUI)
+Vue.use(VueResource)
+
 Vue.config.productionTip = false
+Vue.http.headers.common['Access-Control-Allow-Origin'] = 'http://127.0.0.1:8545'
 
 /* eslint-disable no-new */
 new Vue({
