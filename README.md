@@ -1,6 +1,6 @@
-# chainlock-web
+# lokkit-web
 
-> A UI for chainlock DAPP
+> A UI for lokkit DAPP
 
 ## Build Setup
 

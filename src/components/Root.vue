@@ -6,7 +6,7 @@
           @init="init"
           v-bind:ethereumNodeUrl="ethereumNodeUrl"
           v-bind:discoveryAddress="discoveryAddress"
-          v-bind:userAddress="userAddress"
+          v-bind:userAddresses="userAddresses"
           v-bind:passphrase="passphrase"
         />
     </div>
@@ -15,7 +15,7 @@
       <rentables
         v-if='initialized'
         v-bind:rentables='this.rentables'
-        v-bind:currentUser='userAddress'
+        v-bind:currentUser='currentAddress'
         @lockUnlock='lockUnlock'
         @rent='rent'
         @refreshRentables='refreshRentables'
@@ -35,6 +35,12 @@ import RentableDiscoveryService from '../services/EthereumRentableDiscoveryServi
 
 var rentableService
 var discoveryService
+var Web3 = require('web3')
+try {
+  var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
+} catch (error) {
+  console.log(error)
+}
 
 function getRentables () {
   var rentables = discoveryService.allRentables()
@@ -61,7 +67,8 @@ export default {
       initialized: false,
       ethereumNodeUrl: 'http://localhost:8545',
       discoveryAddress: '0x427fa84fcf9c8852d27f48f53267395fbf7af349',
-      userAddress: '0x55047206d03afef0d79bb2d90710bf9f23737860',
+      userAddresses: web3.eth.accounts,
+      currentAddress: '',
       passphrase: ''
     }
   },
@@ -106,10 +113,10 @@ export default {
             message: 'could not rent!',
             type: 'error'
           })
-        } else {
+        } else if (d) {
           self.$message({
-            message: 'successfully rented!',
-            type: 'success'
+            message: 'transaction sent ' + d,
+            type: 'info'
           })
           // this.refreshRentables()
         }

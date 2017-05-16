@@ -1,7 +1,7 @@
 {
-  "name": "chainlock-web",
+  "name": "lokkit-web",
   "version": "1.0.0",
-  "description": "A UI for chainlock DAPP",
+  "description": "A UI for the lokkit DAPP",
   "author": "Andreas Schmid <ikeark@gmail.com>",
   "private": true,
   "scripts": {

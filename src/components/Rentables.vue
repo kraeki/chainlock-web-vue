@@ -30,8 +30,7 @@
       </el-table-column>
       <el-table-column label="Rentable" width="500px">
         <template scope="props">
-        <el-label v-if="props.row.owner === currentUser"><b>{{props.row.address}}</b></el-label>
-        <el-label v-else>{{props.row.address}}</el-label>
+          <el-label>{{props.row.address}}</el-label>
         </template>
       </el-table-column>
       <el-table-column label="Action">

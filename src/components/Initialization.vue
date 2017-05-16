@@ -16,7 +16,14 @@
           <el-input placeholder="0x0000000000000000000000000000000000000000" v-model="discoveryAddress" @change="inputChanged" />
         </el-form-item>
         <el-form-item label="user adi">
-          <el-input placeholder="0x0000000000000000000000000000000000000000" v-model="userAddress" @change="inputChanged" />
+          <el-select placeholder="0x0000000000000000000000000000000000000000" v-model="userAddress" @change="inputChanged">
+            <el-option
+              v-for="adi in userAddresses"
+              :key="adi"
+              :label="adi"
+              :value="adi">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="secret">
           <el-input placeholder="secret" v-model="passphrase" @change="inputChanged" />
@@ -37,14 +44,15 @@ export default {
   props: {
     ethereumNodeUrl: String,
     discoveryAddress: String,
-    userAddress: String,
+    userAddresses: Array,
     passphrase: String
   },
   components: {},
   data () {
     return {
       dialogFormVisible: false,
-      allSet: false
+      allSet: false,
+      userAddress: ''
     }
   },
   methods: {
@@ -52,7 +60,7 @@ export default {
       var data = {
         'ethereumNodeUrl': this.ethereumNodeUrl,
         'discoveryAddress': this.discoveryAddress,
-        'userAddress': this.userAddress,
+        'userAddress': this.userAddresses[0],
         'passphrase': this.passphrase
       }
       this.dialogFormVisible = false
@@ -63,7 +71,7 @@ export default {
       this.$emit('init', false, {})
     },
     inputChanged () {
-      this.allSet = this.discoveryAddress !== '' && this.userAddress !== '' && this.passphrase !== '' && this.ethereumNodeUrl !== ''
+      this.allSet = this.discoveryAddress !== '' && this.userAddress !== '' && this.ethereumNodeUrl !== ''
     }
   }
 }
