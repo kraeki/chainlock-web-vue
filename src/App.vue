@@ -1,13 +1,17 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+      <qr-code-scanner></qr-code-scanner>
+      <router-view></router-view>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'app'
-}
+  import QrCodeScanner from '@/components/QrCodeScanner'
+
+  export default {
+    name: 'app',
+    components: {QrCodeScanner}
+  }
 </script>
 
 <style>
