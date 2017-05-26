@@ -7,9 +7,8 @@
       <h1 class="md-title">My Title</h1>
     </md-toolbar>
 
-    <div class="main-content">
+    <md-content>
       <router-view></router-view>
-
       <!-- Menu items -->
       <md-sidenav class="md-left" ref="leftSidenav">
         <md-toolbar>
@@ -49,8 +48,25 @@
         </div>
       </md-sidenav>
       <!-- End Menu items -->
-
-    </div>
+    </md-content>
+    <md-bottom-bar>
+      <md-bottom-bar-item
+        href="#/scanner"
+        md-iconset="mdi mdi-qrcode-scan">
+        Scan
+      </md-bottom-bar-item>
+      <md-bottom-bar-item
+        href="/#"
+        md-iconset="mdi mdi-book-multiple-variant"
+        md-active>
+        Rentables
+      </md-bottom-bar-item>
+      <md-bottom-bar-item
+        href="#/account"
+        md-iconset="mdi mdi-account-box">
+        My account
+      </md-bottom-bar-item>
+    </md-bottom-bar>
   </div>
 </template>
 
@@ -68,17 +84,24 @@
 </script>
 
 <style>
+
   body {
     margin: 0px;
     padding: 0px;
+    min-height: 100%;
+
+    display: flex;
+    flex-direction: column;
   }
+
   #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: #2c3e50;
-    margin: 0px;
-    padding: 0px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  md-content {
+    flex: 1;
   }
 
  /* Sidenav */
