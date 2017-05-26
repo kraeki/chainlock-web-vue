@@ -1,27 +1,23 @@
 <template>
   <div>
-    <div id="header">
-      <h1 style="display:inline">lokkit rentals</h1>
-      <initialization style="display:inline"
-          @init="init"
-          v-bind:ethereumNodeUrl="ethereumNodeUrl"
-          v-bind:discoveryAddress="discoveryAddress"
-          v-bind:userAddresses="userAddresses"
-          v-bind:passphrase="passphrase"
-        />
-    </div>
+    <md-list class="md-double-line">
+      <md-subheader class="md-inset">Lockers</md-subheader>
 
-    <div class='body_container'>
-      <rentables
-        v-if='initialized'
-        v-bind:rentables='this.rentables'
-        v-bind:currentUser='currentAddress'
-        @lockUnlock='lockUnlock'
-        @rent='rent'
-        @refreshRentables='refreshRentables'
-        @addRentable='addRentable'
-      />
-    </div>
+      <md-list-item>
+        <md-avatar class="md-avatar-icon">
+          <md-icon>folder</md-icon>
+        </md-avatar>
+
+        <div class="md-list-text-container">
+          <span>Locker 1</span>
+          <p>Jan 9, 2014</p>
+        </div>
+
+        <md-button class="md-icon-button md-list-action">
+          <md-icon>info</md-icon>
+        </md-button>
+      </md-list-item>
+    </md-list>
   </div>
 </template>
 
@@ -73,6 +69,9 @@ export default {
     }
   },
   methods: {
+    toggleLeftSidenav: function () {
+      this.$refs.leftSidenav.toggle()
+    },
     lockUnlock: function (obj) {
       rentableService.sendCommand(obj.contractAddress, obj.locked ? 'lock' : 'unlock')
     },
@@ -134,7 +133,4 @@ export default {
 </script>
 
 <style scoped>
-.body_container {
-  padding: 0px;
-}
 </style>
