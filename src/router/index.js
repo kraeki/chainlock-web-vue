@@ -10,7 +10,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Root',
+      name: 'Rentables',
       component: Root,
       meta: {
         title: 'Rentables'

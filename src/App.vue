@@ -52,18 +52,20 @@
     <md-bottom-bar>
       <md-bottom-bar-item
         href="#/scanner"
-        md-iconset="mdi mdi-qrcode-scan">
+        md-iconset="mdi mdi-qrcode-scan"
+        v-bind:class="{'md-active': $route.name == 'Scanner'}">
         Scan
       </md-bottom-bar-item>
       <md-bottom-bar-item
         href="/#"
         md-iconset="mdi mdi-book-multiple-variant"
-        md-active>
-        Rentables
+        v-bind:class="{'md-active': $route.name == 'RentableDetails'}">
+        Rentable
       </md-bottom-bar-item>
       <md-bottom-bar-item
         href="#/account"
-        md-iconset="mdi mdi-account-box">
+        md-iconset="mdi mdi-account-box"
+        v-bind:class="{'md-active': $route.name == 'account'}">
         My account
       </md-bottom-bar-item>
     </md-bottom-bar>
