@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <video ref="video" autoplay="true" width="100%" height="100"></video>
-    <canvas id="qr-canvas" ref="canvas" style="display: none;"></canvas>
+  <div style="text-align: center; margin-top: 1em;">
+    <video ref="video" class="video" autoplay=""></video>
+    <canvas id="qr-canvas" ref="canvas"></canvas>
   </div>
 </template>
 
@@ -11,56 +11,81 @@
   export default {
     name: 'QrCodeScanner',
     mounted () {
-      var videoReady = false
-      var canvas = this.$refs.canvas
-      var video = this.$refs.video
-      var context = canvas.getContext('2d')
-      var qrcode = new QrCode()
+      this.qrcode = new QrCode()
+      this.video = this.$refs.video
+      this.canvas = this.$refs.canvas
+      this.context = this.canvas.getContext('2d')
 
-      // fetch video size
-      var getVideoSize = function () {
-        canvas.width = video.videoWidth
-        canvas.height = video.videoHeight
-        video.removeEventListener('playing', getVideoSize, false)
-      }
-      video.addEventListener('playing', getVideoSize, false)
-
-      context.clearRect(0, 0, canvas.width, canvas.height)
-      qrcode.callback = read
-
-      function read (error, result) {
-        if (error !== undefined) {
-          console.log('Error while decoding: ' + error)
-          setTimeout(captureToCanvasAndDecode, 500)
-          return
-        }
-        alert('Result' + result)
-      }
-
-      // Capture video onto canvas and decode it
-      function captureToCanvasAndDecode () {
-        if (!videoReady) {
-          return
-        }
-        context.drawImage(video, 0, 0, canvas.width, canvas.height)
-        qrcode.decode(context.getImageData(0, 0, canvas.width, canvas.height))
-      }
-
-      // Setup Video
-      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia
+      // open webcam
+      navigator.getUserMedia = navigator.getUserMedia ||
+                               navigator.webkitGetUserMedia ||
+                               navigator.mozGetUserMedia ||
+                               navigator.msGetUserMedia ||
+                               navigator.oGetUserMedia
       if (navigator.getUserMedia) {
-        navigator.getUserMedia({video: true, 'facingMode': 'environment', audio: false}, handleVideo, videoError)
-      }
+        navigator.getUserMedia({ video: true, audio: false }, (stream) => {
+          this.video.src = window.URL.createObjectURL(stream)
+          this.stream = stream
+          var self = this
 
-      function handleVideo (stream) {
-        video.src = window.URL.createObjectURL(stream)
-        videoReady = true
-        captureToCanvasAndDecode()
+          // fetch video size
+          self.video.addEventListener('playing', () => {
+            self.canvas.width = self.video.videoWidth
+            self.canvas.height = self.video.videoHeight
+            self.video.removeEventListener('playing', self, false)
+            console.log('video size fetched')
+
+            // clear canvas
+            self.context.clearRect(0, 0, self.canvas.width, self.canvas.height)
+
+            // prepare function to capture and decode
+            self.captureToCanvasAndDecode = function () {
+              // MOBILE HACK: flip canvas because on android the canvas is horizontally flipped. :)
+              if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                self.context.translate(self.canvas.width, 0)
+                self.context.scale(-1, 1)
+              }
+              self.context.drawImage(self.video, 0, 0, self.canvas.width, self.canvas.height)
+              self.qrcode.decode(self.context.getImageData(0, 0, self.canvas.width, self.canvas.height))
+            }
+
+            // set callback for decoding result
+            self.qrcode.callback = function (error, result) {
+              if (error !== undefined) {
+                console.log('Error while decoding: ' + error)
+                console.log('Try again...')
+                setTimeout(self.captureToCanvasAndDecode, 500)
+                return
+              }
+
+              self.$router.push({name: 'RentableDetails', params: {address: result.result}})
+            }
+
+            this.captureToCanvasAndDecode()
+          }, false)
+        }, (error) => {
+          console.log(error + ': ' + error.name)
+          alert(error + ': ' + error.name)
+        })
       }
-      function videoError (e) {
-        videoReady = false
-        console.error('Error:' + e)
-      }
+    },
+    beforeDestroy () {
+      console.log('beforeDestroy')
+      this.video.pause()
+      this.video.src = ''
+      this.stream.getTracks()[0].stop()
+      console.log('beforeDestroy done')
     }
   }
 </script>
+
+<style scoped>
+  .video {
+    border: 3px solid red;
+    height: 100%;
+  }
+
+  #qr-canvas {
+    display: none;
+  }
+</style>

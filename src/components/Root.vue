@@ -1,19 +1,32 @@
 <template>
   <div>
     <md-list class="md-double-line">
-      <md-subheader class="md-inset">Lockers</md-subheader>
-
       <md-list-item>
         <md-avatar class="md-avatar-icon">
-          <md-icon>folder</md-icon>
+          <md-icon style="margin-top:-.13em;"><i class="mdi mdi-qrcode"></i></md-icon>
         </md-avatar>
 
-        <div class="md-list-text-container">
-          <span>Locker 1</span>
-          <p>Jan 9, 2014</p>
-        </div>
+          <div class="md-list-text-container">
+            <span>Locker 1</span>
+            <p>Jan 9, 2014</p>
+          </div>
 
-        <md-button class="md-icon-button md-list-action">
+        <md-button href="#/rentable?address=0x000000000" class="md-icon-button md-list-action">
+          <md-icon>info</md-icon>
+        </md-button>
+      </md-list-item>
+      <md-divider class="md-inset"></md-divider>
+      <md-list-item>
+        <md-avatar class="md-avatar-icon">
+          <md-icon style="margin-top:-.13em;"><i class="mdi mdi-qrcode"></i></md-icon>
+        </md-avatar>
+
+          <div class="md-list-text-container">
+            <span>Locker 2</span>
+            <p>Jan 9, 2014</p>
+          </div>
+
+        <md-button href="#/rentable?address=0x000000001" class="md-icon-button md-list-action">
           <md-icon>info</md-icon>
         </md-button>
       </md-list-item>
