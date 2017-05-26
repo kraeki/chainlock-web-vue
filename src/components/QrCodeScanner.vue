@@ -1,7 +1,7 @@
 <template>
   <div>
-      <video ref="video" autoplay="true" width="400" height="300"></video>
-      <canvas id="qr-canvas" ref="canvas" width="400" height="300"></canvas>
+    <video ref="video" autoplay="true" width="100%" height="100"></video>
+    <canvas id="qr-canvas" ref="canvas" style="display: none;"></canvas>
   </div>
 </template>
 
@@ -16,6 +16,14 @@
       var video = this.$refs.video
       var context = canvas.getContext('2d')
       var qrcode = new QrCode()
+
+      // fetch video size
+      var getVideoSize = function () {
+        canvas.width = video.videoWidth
+        canvas.height = video.videoHeight
+        video.removeEventListener('playing', getVideoSize, false)
+      }
+      video.addEventListener('playing', getVideoSize, false)
 
       context.clearRect(0, 0, canvas.width, canvas.height)
       qrcode.callback = read
@@ -34,7 +42,7 @@
         if (!videoReady) {
           return
         }
-        context.drawImage(video, 0, 0)
+        context.drawImage(video, 0, 0, canvas.width, canvas.height)
         qrcode.decode(context.getImageData(0, 0, canvas.width, canvas.height))
       }
 
