@@ -11,17 +11,26 @@ export default new Router({
     {
       path: '/',
       name: 'Root',
-      component: Root
+      component: Root,
+      meta: {
+        title: 'Rentables'
+      }
     },
     {
       path: '/scanner',
       name: 'Scanner',
-      component: Scanner
+      component: Scanner,
+      meta: {
+        title: 'Scanning Rentable'
+      }
     },
     {
       path: '/rentable/:address',
       name: 'RentableDetails',
-      component: RentableDetails
+      component: RentableDetails,
+      meta: {
+        title: 'Detail of Rentable'
+      }
     }
   ]
 })

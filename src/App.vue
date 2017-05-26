@@ -4,7 +4,7 @@
       <md-button class="md-icon-button" @click.native="toggleLeftSidenav">
 	<md-icon>menu</md-icon>
       </md-button>
-      <h1 class="md-title">My Title</h1>
+      <h1 class="md-title">{{ $route.meta.title }}</h1>
     </md-toolbar>
 
     <md-content>
