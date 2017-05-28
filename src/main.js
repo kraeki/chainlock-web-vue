@@ -13,6 +13,7 @@ import VueResource from 'vue-resource'
 
 import App from './App'
 import router from './router'
+import {store} from './store'
 
 Vue.use(VueMaterial)
 Vue.use(VueResource)
@@ -24,6 +25,7 @@ Vue.http.headers.common['Access-Control-Allow-Origin'] = 'http://127.0.0.1:8545'
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App }
 })

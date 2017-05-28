@@ -58,6 +58,18 @@
                 return
               }
 
+              self.$store.dispatch('addRentable', {
+                // fields of the contract
+                owner: '0x4657328',
+                description: 'le descpiption 3',
+                location: 'le location 3',
+                costPerSecond: 10,
+                deposit: 100,
+                reservations: [],
+                // additional fields
+                address: result.result,
+                locked: false
+              })
               self.$router.push({name: 'RentableDetails', params: {address: result.result}})
             }
 
