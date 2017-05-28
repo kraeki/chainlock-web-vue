@@ -1,50 +1,54 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersist from 'vuex-localstorage'
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-  state: {
-    rentables: [{
-      // fields of the contract
-      owner: '0x0001000',
-      description: 'le descpiption',
-      location: 'le location',
-      costPerSecond: 50,
-      deposit: 500,
-      reservations: [{
-        start: '10:00',
-        end: '14:00',
-        renter: '0x444444444'
+  plugins: [createPersist({
+    namespace: 'lokkit-webapp-state',
+    initialState: {
+      rentables: [{
+        // fields of the contract
+        owner: '0x0001000',
+        description: 'le descpiption',
+        location: 'le location',
+        costPerSecond: 50,
+        deposit: 500,
+        reservations: [{
+          start: '10:00',
+          end: '14:00',
+          renter: '0x444444444'
+        }, {
+          start: '10:00',
+          end: '14:00',
+          renter: '0x444444444'
+        },
+        {
+          start: '10:00',
+          end: '14:00',
+          renter: '0x444444444'
+        }],
+        // additional fields
+        address: '0x111111111',
+        locked: false
       },
       {
-        start: '10:00',
-        end: '14:00',
-        renter: '0x444444444'
-      },
-      {
-        start: '10:00',
-        end: '14:00',
-        renter: '0x444444444'
+        // fields of the contract
+        owner: '0x0002000',
+        description: 'le descpiption 2',
+        location: 'le location 2',
+        costPerSecond: 10,
+        deposit: 100,
+        reservations: [],
+        // additional fields
+        address: '0x111111112',
+        locked: false
       }],
-      // additional fields
-      address: '0x111111111',
-      locked: false
+      accounts: ['0x444444444']
     },
-    {
-      // fields of the contract
-      owner: '0x0002000',
-      description: 'le descpiption 2',
-      location: 'le location 2',
-      costPerSecond: 10,
-      deposit: 100,
-      reservations: [],
-      // additional fields
-      address: '0x111111112',
-      locked: false
-    }],
-    accounts: ['0x444444444']
-  },
+    expires: 7 * 24 * 60 * 30 * 1e3
+  })],
   getters: {
     getRentables (state) {
       return state.rentables
