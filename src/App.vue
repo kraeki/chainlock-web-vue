@@ -40,8 +40,17 @@
               <a href="#/account"
                 v-on:click='toggleLeftSidenav'
                 class="md-list-item-container md-button">
-                <md-icon>account_box</i></md-icon>
+                <md-icon>account_box</md-icon>
                 <span>Account</span>
+              </a>
+            </li>
+            <md-divider class="md-inset"></md-divider>
+            <li class="md-list-item">
+              <a href=""
+                v-on:click='resetLocalStorage'
+                class="md-list-item-container md-button">
+                <md-icon>reset</md-icon>
+                <span>Reset Storage</span>
               </a>
             </li>
           </ul>
@@ -59,9 +68,10 @@
       <md-bottom-bar-item
         href="/#"
         md-iconset="mdi mdi-book-multiple-variant"
-        v-bind:class="{'md-active': $route.name == 'RentableDetails'}">
-        Rentable
+        v-bind:class="{'md-active': $route.name == 'RentableDetails' ||  $route.name == 'Rentables'}">
+        Rentables
       </md-bottom-bar-item>
+      <md-divider />
       <md-bottom-bar-item
         href="#/account"
         md-iconset="mdi mdi-account-box"
@@ -79,6 +89,10 @@
     methods: {
       toggleLeftSidenav: function () {
         this.$refs.leftSidenav.toggle()
+      },
+      resetLocalStorage: function () {
+        localStorage.clear()
+        location.reload()
       }
     }
 

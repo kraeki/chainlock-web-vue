@@ -15,8 +15,8 @@
         <md-button :href="'#/rentable/' + rentable.address" class="md-icon-button md-list-action">
           <md-icon>info</md-icon>
         </md-button>
+        <md-divider class="md-inset"></md-divider>
       </md-list-item>
-      <md-divider class="md-inset"></md-divider>
     </md-list>
   </div>
 </template>
