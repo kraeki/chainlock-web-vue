@@ -100,9 +100,15 @@ export const store = new Vuex.Store({
   },
   actions: {
     initialize (context, data) {
-      web3 = new Web3(new Web3.providers.HttpProvider('http://' + context.state.node.host + ':' + context.state.node.port))
-      rentableService = new EthereumRentableService(web3)
-      context.commit('initialize')
+      const nodeUrl = 'http://' + context.state.node.host + ':' + context.state.node.port
+      web3 = new Web3(new Web3.providers.HttpProvider(nodeUrl))
+      try {
+        rentableService = new EthereumRentableService(web3)
+        context.commit('initialize')
+      } catch (e) {
+        console.error(e)
+        Vue.toasted.error('Could not connect to node "' + nodeUrl + '"')
+      }
     },
     setAccounts (context, data) {
       context.commit('setAccounts', data)

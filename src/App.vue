@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <vue-toast ref="toast"></vue-toast>
     <md-toolbar>
       <md-button class="md-icon-button" @click.native="toggleLeftSidenav">
 	<md-icon>menu</md-icon>
