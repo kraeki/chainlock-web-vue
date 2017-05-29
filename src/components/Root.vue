@@ -31,12 +31,6 @@ import RentableDiscoveryService from '../services/EthereumRentableDiscoveryServi
 
 var rentableService
 var discoveryService
-var Web3 = require('web3')
-try {
-  var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
-} catch (error) {
-  console.log(error)
-}
 
 function getRentables () {
   var rentables = discoveryService.allRentables()

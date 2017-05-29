@@ -73,7 +73,7 @@
       </md-bottom-bar-item>
       <md-divider />
       <md-bottom-bar-item
-        href="#/account"
+        href="#/accounts"
         md-iconset="mdi mdi-account-box"
         v-bind:class="{'md-active': $route.name == 'account'}">
         My account
@@ -94,13 +94,14 @@
         localStorage.clear()
         location.reload()
       }
+    },
+    created () {
+      this.$store.dispatch('initialize')
     }
-
   }
 </script>
 
 <style>
-
   body {
     margin: 0px;
     padding: 0px;

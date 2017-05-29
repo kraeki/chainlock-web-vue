@@ -1,13 +1,22 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersist from 'vuex-localstorage'
+import Web3 from 'web3'
 
 Vue.use(Vuex)
+
+var web3 = null
 
 export const store = new Vuex.Store({
   plugins: [createPersist({
     namespace: 'lokkit-webapp-state',
     initialState: {
+      node: {
+        host: 'localhost',
+        port: '8545',
+        connected: false,
+        accounts: ['0x444444444']
+      },
       rentables: [{
         // fields of the contract
         owner: '0x0001000',
@@ -44,17 +53,26 @@ export const store = new Vuex.Store({
         // additional fields
         address: '0x111111112',
         locked: false
-      }],
-      accounts: ['0x444444444']
+      }]
     },
     expires: 7 * 24 * 60 * 30 * 1e3
   })],
   getters: {
     getRentables (state) {
       return state.rentables
+    },
+    getAccounts (state) {
+      return state.node.accounts
     }
   },
   mutations: {
+    initialize (state, data) {
+      const accounts = web3.eth.accounts
+      state.node.accounts = accounts
+    },
+    setAccounts (state, data) {
+      state.node.accounts = data
+    },
     addRentable (state, data) {
       state.rentables.push(data)
     },
@@ -78,6 +96,13 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+    initialize (context, data) {
+      web3 = new Web3(new Web3.providers.HttpProvider('http://' + context.state.node.host + ':' + context.state.node.port))
+      context.commit('initialize')
+    },
+    setAccounts (context, data) {
+      context.commit('setAccounts', data)
+    },
     addRentable (context, data) {
       context.commit('addRentable', data)
     },
