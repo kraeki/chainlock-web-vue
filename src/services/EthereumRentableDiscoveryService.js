@@ -15,8 +15,8 @@ export default class EthereumRentableDiscoveryService {
     this.rentables.push(address) // todo: handle exceptions
     var tx = this.discovery.registerExisting.sendTransaction(address, {
       from: this.rentableService.address,
-      gas: 1000000000,
-      gasPrice: 100
+      gas: 0x1000000,
+      gasPrice: 0x100000
     }, function (error, d) {
       console.log('add')
       if (error) {
@@ -31,17 +31,25 @@ export default class EthereumRentableDiscoveryService {
 
   newRentable (description, location, price, deposit) {
     this.rentableService.unlock()
+    console.log(description)
+    console.log(location)
+    console.log(price)
+    console.log(deposit)
+    console.log(this.rentableService.address)
+
     var tx = this.discovery.registerNew.sendTransaction(description, location, price, deposit, {
       from: this.rentableService.address,
-      gas: 1000000000,
-      gasPrice: 100
-    }, function (error, d) {
-      console.log('new')
-      if (error) {
-        console.log(JSON.stringify(error))
-      }
-      if (d) {
-        console.log(JSON.stringify(d))
+      gas: 0x1000000,
+      gasPrice: 0x100000
+    }, function (e, contract) {
+      if (!e) {
+        if (!contract.address) {
+          console.log('new rentable mining... ' + contract.transactionHash)
+        } else {
+          console.log('new rentable mined: ' + contract.address)
+        }
+      } else {
+        console.log('ERROR: ' + e)
       }
     })
     this.rentableService.lock()
