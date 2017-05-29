@@ -26,6 +26,14 @@ Vue.use(Toasted, {
 Vue.config.productionTip = false
 Vue.http.headers.common['Access-Control-Allow-Origin'] = 'http://127.0.0.1:8545'
 
+// Filters
+import moment from 'moment'
+Vue.filter('formatUnixTimeStamp', function (value) {
+  if (value) {
+    return moment.unix(value).format('MM/DD/YYYY hh:mm')
+  }
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

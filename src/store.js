@@ -28,17 +28,17 @@ export const store = new Vuex.Store({
         costPerSecond: 50,
         deposit: 500,
         reservations: [{
-          start: '10:00',
-          end: '14:00',
+          start: 1496100960,
+          end: 1496100960,
           renter: '0x444444444'
         }, {
-          start: '10:00',
-          end: '14:00',
+          start: 1496100960,
+          end: 1496100960,
           renter: '0x444444444'
         },
         {
-          start: '10:00',
-          end: '14:00',
+          start: 1496100960,
+          end: 1496100960,
           renter: '0x444444444'
         }],
         // additional fields
