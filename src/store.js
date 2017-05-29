@@ -3,9 +3,12 @@ import Vuex from 'vuex'
 import createPersist from 'vuex-localstorage'
 import Web3 from 'web3'
 
+import EthereumRentableService from './services/EthereumRentableService.js'
+
 Vue.use(Vuex)
 
 var web3 = null
+var rentableService = null
 
 export const store = new Vuex.Store({
   plugins: [createPersist({
@@ -98,13 +101,27 @@ export const store = new Vuex.Store({
   actions: {
     initialize (context, data) {
       web3 = new Web3(new Web3.providers.HttpProvider('http://' + context.state.node.host + ':' + context.state.node.port))
+      rentableService = new EthereumRentableService(web3)
       context.commit('initialize')
     },
     setAccounts (context, data) {
       context.commit('setAccounts', data)
     },
+    // Loads a contract given by its address from the blockchain
     addRentable (context, data) {
-      context.commit('addRentable', data)
+      const r = rentableService.rentableFromAddress(data.address)
+      context.commit('addRentable', {
+        // additional fields
+        address: data.address,
+        locked: false,
+        // fields of contract
+        owner: r.owner(),
+        description: r.description(),
+        location: r.location(),
+        costPerSecond: r.costPerSecond(),
+        deposit: r.deposit(),
+        reservations: r.allReservations()
+      })
     },
     reserve (context, data) {
       // TODO: check if possible to reserve

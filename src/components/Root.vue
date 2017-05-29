@@ -59,11 +59,10 @@ export default {
   }),
   data () {
     return {
-      rentables: [],
       initialized: false,
       ethereumNodeUrl: 'http://localhost:8545',
       discoveryAddress: '0x427fa84fcf9c8852d27f48f53267395fbf7af349',
-      userAddresses: web3.eth.accounts,
+      userAddresses: 'n/a',
       currentAddress: '',
       passphrase: ''
     }

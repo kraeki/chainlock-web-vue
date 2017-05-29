@@ -1,14 +1,14 @@
 export default class EthereumRentableService {
 
   static abi = [{ 'constant': true, 'inputs': [], 'name': 'myPendingRefund', 'outputs': [{ 'name': '', 'type': 'uint256' }], 'payable': false, 'type': 'function' }, { 'constant': true, 'inputs': [], 'name': 'costPerSecond', 'outputs': [{ 'name': '', 'type': 'uint256' }], 'payable': false, 'type': 'function' }, { 'constant': true, 'inputs': [], 'name': 'currentRenter', 'outputs': [{ 'name': '', 'type': 'address' }], 'payable': false, 'type': 'function' }, { 'constant': true, 'inputs': [], 'name': 'location', 'outputs': [{ 'name': '', 'type': 'string' }], 'payable': false, 'type': 'function' }, { 'constant': true, 'inputs': [{ 'name': 'time', 'type': 'uint256' }], 'name': 'occupiedAt', 'outputs': [{ 'name': '', 'type': 'bool' }], 'payable': false, 'type': 'function' }, { 'constant': true, 'inputs': [], 'name': 'description', 'outputs': [{ 'name': '', 'type': 'string' }], 'payable': false, 'type': 'function' }, { 'constant': false, 'inputs': [{ 'name': 'start', 'type': 'uint256' }, { 'name': 'end', 'type': 'uint256' }], 'name': 'rent', 'outputs': [], 'payable': true, 'type': 'function' }, { 'constant': true, 'inputs': [], 'name': 'owner', 'outputs': [{ 'name': '', 'type': 'address' }], 'payable': false, 'type': 'function' }, { 'constant': false, 'inputs': [{ 'name': 'mins', 'type': 'uint256' }], 'name': 'rentNowForMinutes', 'outputs': [], 'payable': true, 'type': 'function' }, { 'constant': false, 'inputs': [], 'name': 'withdrawRefundedDeposits', 'outputs': [{ 'name': '', 'type': 'bool' }], 'payable': false, 'type': 'function' }, { 'constant': true, 'inputs': [], 'name': 'deposit', 'outputs': [{ 'name': '', 'type': 'uint256' }], 'payable': false, 'type': 'function' }, { 'constant': true, 'inputs': [{ 'name': 'start', 'type': 'uint256' }, { 'name': 'end', 'type': 'uint256' }], 'name': 'costInWei', 'outputs': [{ 'name': '', 'type': 'uint256' }], 'payable': false, 'type': 'function' }, { 'constant': true, 'inputs': [{ 'name': 'start', 'type': 'uint256' }, { 'name': 'end', 'type': 'uint256' }], 'name': 'occupiedBetween', 'outputs': [{ 'name': '', 'type': 'bool' }], 'payable': false, 'type': 'function' }, { 'constant': true, 'inputs': [], 'name': 'allReservations', 'outputs': [{ 'name': '', 'type': 'uint256[3][]' }], 'payable': false, 'type': 'function' }, { 'constant': false, 'inputs': [{ 'name': 'start', 'type': 'uint256' }, { 'name': 'end', 'type': 'uint256' }], 'name': 'refundReservationDeposit', 'outputs': [], 'payable': false, 'type': 'function' }, { 'constant': false, 'inputs': [{ 'name': 'newOwner', 'type': 'address' }], 'name': 'transferOwnership', 'outputs': [], 'payable': false, 'type': 'function' }, { 'constant': false, 'inputs': [{ 'name': 'end', 'type': 'uint256' }], 'name': 'rentNowUntil', 'outputs': [], 'payable': true, 'type': 'function' }, { 'inputs': [{ 'name': 'pdescription', 'type': 'string' }, { 'name': 'plocation', 'type': 'string' }, { 'name': 'pcostPerSecond', 'type': 'uint256' }, { 'name': 'pdeposit', 'type': 'uint256' }], 'payable': false, 'type': 'constructor' }, { 'anonymous': false, 'inputs': [{ 'indexed': false, 'name': 'start', 'type': 'uint256' }, { 'indexed': false, 'name': 'end', 'type': 'uint256' }, { 'indexed': false, 'name': 'renter', 'type': 'address' }], 'name': 'OnReserve', 'type': 'event' }]
-  static symmetricKeyPassword = 'lokkit'
-  static Web3 = require('web3')
 
-  constructor (ethereumNodeAddress, userAddress, userPassphrase) {
-    this.address = userAddress
-    this.passphrase = userPassphrase
-    this.ethereumNodeAddress = ethereumNodeAddress
-    this.web3 = new EthereumRentableService.Web3(new EthereumRentableService.Web3.providers.HttpProvider(ethereumNodeAddress))
+  static symmetricKeyPassword = 'lokkit'
+
+  constructor (web3) {
+    this.address = null
+    this.passphrase = null
+    this.web3 = web3
+
     this.rentableContract = this.web3.eth.contract(EthereumRentableService.abi)
 
     this.symmetricKeyAddress = this.web3.shh.addSymmetricKeyFromPassword(EthereumRentableService.symmetricKeyPassword)
