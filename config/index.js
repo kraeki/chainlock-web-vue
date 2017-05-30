@@ -1,6 +1,7 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 var path = require('path')
 var httpProxy = require('http-proxy')
+var fs = require('fs')
 
 module.exports = {
   build: {
