@@ -23,6 +23,13 @@ Vue.use(Toasted, {
   duration: 5000
 })
 
+Vue.material.registerTheme('default', {
+  primary: 'grey',
+  accent: 'yellow',
+  warn: 'red',
+  background: 'white'
+})
+
 Vue.config.productionTip = false
 Vue.http.headers.common['Access-Control-Allow-Origin'] = 'http://127.0.0.1:8545'
 
