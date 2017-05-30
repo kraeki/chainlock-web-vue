@@ -38,7 +38,7 @@
               </a>
             </li>
             <li class="md-list-item">
-              <a href="#/account"
+              <a href="#/accounts"
                 v-on:click='toggleLeftSidenav'
                 class="md-list-item-container md-button">
                 <md-icon>account_box</md-icon>
