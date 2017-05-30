@@ -1,5 +1,6 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 var path = require('path')
+var httpProxy = require('http-proxy')
 
 module.exports = {
   build: {
@@ -27,7 +28,7 @@ module.exports = {
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: { },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
     // (https://github.com/webpack/css-loader#sourcemaps)
@@ -36,3 +37,16 @@ module.exports = {
     cssSourceMap: false
   }
 }
+
+// https://github.com/nodejitsu/node-http-proxy#using-https
+httpProxy.createServer({
+  target: 'http://localhost:8080',
+  ssl: {
+    key: fs.readFileSync('./certs/server.key', 'utf8'),
+    cert: fs.readFileSync('./certs/server.crt', 'utf8'),
+    passphrase: 'asdf'
+  },
+  changeOrigin: true,
+  autoRewrite: true,
+  protocolRewrite: 'https'
+}).listen(8000);
