@@ -126,7 +126,7 @@
           rentableAddress: this.rentable.address,
           start: from.unix(),
           end: to.unix(),
-          account: '0x99'
+          account: this.account
         })
         this.closeDialog('reserveDialog')
       },
@@ -143,22 +143,23 @@
         })
       }
     },
-    data: function () {
-      const now = moment()
-      return {
-        reserveDialog: {
-          fromDate: now.format('YYYY-MM-DD'),
-          fromTime: now.format('HH:mm'),
-          unit: 'Minutes',
-          duration: 15
-        }
-      }
-    },
     computed: {
       rentable () {
         return this.$store.state.rentables.find((i) => {
           return i.address === this.$route.params.address
         })
+      },
+      account () {
+        return this.$store.state.node.accounts[0]
+      },
+      reserveDialog () {
+        const now = moment()
+        return {
+          fromDate: now.format('YYYY-MM-DD'),
+          fromTime: now.format('HH:mm'),
+          unit: 'Minutes',
+          duration: 15
+        }
       }
     }
   }

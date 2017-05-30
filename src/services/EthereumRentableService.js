@@ -5,8 +5,6 @@ export default class EthereumRentableService {
   static symmetricKeyPassword = 'lokkit'
 
   constructor (web3) {
-    this.address = null
-    this.passphrase = null
     this.web3 = web3
 
     this.rentableContract = this.web3.eth.contract(EthereumRentableService.abi)
@@ -19,9 +17,9 @@ export default class EthereumRentableService {
     this.privateKey = this.web3.shh.getPrivateKey(this.asymmetricKeyAddress)
   }
 
-  unlock () {
+  unlock (accountAddress, passphrase) {
     try {
-      this.web3.personal.unlockAccount(this.address, this.passphrase)
+      this.web3.personal.unlockAccount(accountAddress, passphrase)
       return true
     } catch (error) {
       console.log(JSON.stringify(error))
@@ -29,20 +27,8 @@ export default class EthereumRentableService {
     }
   }
 
-  lock () {
-    this.web3.personal.lockAccount(this.address)
-  }
-
-  newRentable (description, location, price, deposit, callback) {
-    var gas = 90000000 // this.web3.eth.estimateGas() // todo: better approximate gas?
-    var gasPrice = 100 // todo: what about gas price?
-    this.unlock()
-    this.rentableContract.new(description, location, price, deposit,
-      { from: this.address, gas: gas, gasPrice: gasPrice },
-      function (error, contract) {
-        callback(error, contract)
-      })
-    this.lock()
+  lock (accountAddress) {
+    this.web3.personal.lockAccount(accountAddress)
   }
 
   rentableFromAddress (rentableAddress) {
@@ -75,27 +61,33 @@ export default class EthereumRentableService {
     })
   }
 
-  sign (bytes) {
-    this.unlock()
-    var digest = this.web3.eth.sign(this.address, bytes)
-    this.lock()
+  sign (accountAddress, passphrase, bytes) {
+    this.unlock(accountAddress, passphrase)
+    var digest = this.web3.eth.sign(accountAddress, bytes)
+    this.lock(accountAddress)
     return digest
   }
 
-  rent (rentableAddress, start, end, callback) {
+  rent (accountAddress, passphrase, rentableAddress, start, end, callback) {
     var rentable = this.rentableFromAddress(rentableAddress)
     var cost = rentable.costInWei(start, end)
-    if (this.unlock()) {
-      // todo: estimate gas and gas price
-      /* rentable.OnReserve(function(error, result) {
+    if (this.unlock(accountAddress, passphrase)) {
+      // TODO: estimate gas and gas price
+      rentable.OnRent(function (error, result) {
+        console.log('easd;fljas;lfj;l')
         callback(error, result)
-      }) */
+      })
 
-      var tx = rentable.rent.sendTransaction(start, end, { from: this.address, gas: '0x50000', gasPrice: '0x6000', value: this.web3.toHex(cost) })
+      var tx = rentable.rent.sendTransaction(start, end, { from: accountAddress, gas: '0x50000', gasPrice: '0x6000', value: this.web3.toHex(cost) })
       console.log(tx)
-      this.lock()
+      this.lock(accountAddress)
     } else {
       throw new Error('Could not send transaction')
     }
+  }
+
+  reservedBetween (rentableAddress, start, end) {
+    var rentable = this.rentableFromAddress(rentableAddress)
+    return rentable.reservedBetween(start, end)
   }
 }

@@ -130,8 +130,20 @@ export const store = new Vuex.Store({
       })
     },
     reserve (context, data) {
-      // TODO: check if possible to reserve
-      context.commit('reserve', data)
+      Vue.toasted.info('Checking if free')
+      const ret = rentableService.reservedBetween(data.rentableAddress, data.start, data.end)
+      console.log(ret)
+      if (ret) {
+        Vue.toasted.error('There is already a reservation conflicting to this one')
+        return
+      }
+      Vue.toasted.info('It looks free')
+      console.log(data)
+      rentableService.rent(data.account, '', data.rentableAddress, data.start, data.end, (error, result) => {
+        alert(error)
+        alert(result)
+        Vue.toasted.success('Rented')
+      })
     },
     lock (context, data) {
       context.commit('lock', data)
