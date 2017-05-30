@@ -87,7 +87,7 @@
                 self.$router.push({name: 'RentableDetails', params: {address: result.result}})
               }
 
-              this.captureToCanvasAndDecode()
+              self.captureToCanvasAndDecode()
             }, false)
           }, (error) => {
             console.log(error + ': ' + error.name)
