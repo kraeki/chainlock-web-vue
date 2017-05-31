@@ -1,12 +1,11 @@
 <template>
   <div>
-
     <md-card>
       <md-card-area md-inset>
         <md-card-header>
           <md-card-header-text>
-            <div class="md-title">{{rentable.description}}</div>
-            <div class="md-subhead">{{rentable.description}}</div>
+            <div class="md-title">{{currentRentable.description}}</div>
+            <div class="md-subhead">{{currentRentable.description}}</div>
           </md-card-header-text>
           <md-card-media>
             <img src="static/lokkit_icon_100.png" alt="logo">
@@ -20,11 +19,11 @@
           </div>
           <div class="card-reservation">
             <md-icon>location_on</md-icon>
-            {{rentable.location}}
+            {{currentRentable.location}}
           </div>
           <div class="card-reservation">
             <md-icon>account_circle</md-icon>
-            {{rentable.owner}}
+            {{currentRentable.owner}}
           </div>
         </md-card-content>
         <md-card-content>
@@ -34,8 +33,8 @@
           </div>
         </md-card-content>
         <md-card-actions>
-	  <md-button v-if="!rentable.locked" @click.native="lock">Lock</md-button>
-	  <md-button v-if="rentable.locked" @click.native="unlock">Unlock</md-button>
+	  <md-button v-if="!currentRentable.locked" @click.native="lock">Lock</md-button>
+	  <md-button v-if="currentRentable.locked" @click.native="unlock">Unlock</md-button>
         </md-card-actions>
       </md-card-area>
     </md-card>
@@ -44,7 +43,7 @@
       <md-card-area md-inset>
         <md-card-content>
           <h3 class="md-subheading" style="display:flex;">Reservations</h3>
-          <div class="card-reservation" v-for="reservation in rentable.reservations">
+          <div class="card-reservation" v-for="reservation in currentRentable.reservations">
             <md-icon>access_time</md-icon> {{reservation.start | formatUnixTimeStamp}} - {{reservation.end | formatUnixTimeStamp}}
             <md-icon style="margin-left: .5em;">account_circle</md-icon> {{reservation.renter}}
           </div>
@@ -57,18 +56,19 @@
 
     <md-dialog ref="reserveDialog">
       <md-dialog-title>Add reservation</md-dialog-title>
+      <md-progress v-show="waiting" class="md-accent" md-indeterminate></md-progress>
 
       <md-dialog-content>
         <form>
           <md-input-container>
             <md-icon>event</md-icon>
             <label>Date</label>
-            <md-input v-model="reserveDialog.fromDate" type="date"></md-input>
+            <md-input v-model="reserveDialog.fromDate" type="date" :disabled="waiting"></md-input>
           </md-input-container>
           <md-input-container>
             <md-icon>schedule</md-icon>
             <label>Time</label>
-            <md-input v-model="reserveDialog.fromTime" type="time"></md-input>
+            <md-input v-model="reserveDialog.fromTime" type="time" :disabled="waiting"></md-input>
           </md-input-container>
 
           <md-layout md-gutter>
@@ -76,13 +76,13 @@
               <md-input-container>
                 <md-icon>update</md-icon>
                 <label>Duration</label>
-                <md-input v-model="reserveDialog.duration" type="number"></md-input>
+                <md-input v-model="reserveDialog.duration" type="number" :disabled="waiting"></md-input>
               </md-input-container>
             </md-layout>
             <md-layout md-flex="33" md-flex-offset="33">
               <md-input-container>
                 <label for="unit">Unit</label>
-                <md-select name="unit" id="unit" v-model="reserveDialog.unit">
+                <md-select name="unit" id="unit" v-model="reserveDialog.unit" :disabled="waiting">
                   <md-option value="Minutes">Minutes</md-option>
                   <md-option value="Hours">Hours</md-option>
                   <md-option value="Days">Days</md-option>
@@ -98,7 +98,10 @@
 
       <md-dialog-actions>
         <md-button class="md-primary" @click.native="closeDialog('reserveDialog')">Cancel</md-button>
-        <md-button class="md-primary" @click.native="reserve">Reserve</md-button>
+        <md-button :disabled="waiting" class="md-primary" @click.native="reserve">
+          Reserve
+          <md-progress v-show="waiting" class="md-accent" md-indeterminate></md-progress>
+        </md-button>
       </md-dialog-actions>
     </md-dialog>
   </div>
@@ -106,6 +109,7 @@
 
 <script>
   import moment from 'moment'
+  import {mapGetters} from 'vuex'
 
   export default {
     name: 'RentableDetails',
@@ -123,35 +127,46 @@
         const to = from.clone().add(this.reserveDialog.duration, this.reserveDialog.unit)
 
         this.$store.dispatch('reserve', {
-          rentableAddress: this.rentable.address,
+          action: {
+            actionStart: (state) => {
+              this.waiting = true
+            },
+            actionUpdate: (state) => { this.$toasted.info(state) },
+            actionComplete: (error, args) => {
+              if (error) {
+                this.$toasted.error(args.msg)
+              } else {
+                this.$toasted.success(args.msg)
+                this.closeDialog('reserveDialog')
+              }
+              this.waiting = false
+            }
+          },
+          rentableAddress: this.currentRentable.address,
           start: from.unix(),
-          end: to.unix(),
-          account: this.account
+          end: to.unix()
         })
-        this.closeDialog('reserveDialog')
       },
       lock: function () {
         this.$store.dispatch('lock', {
-          rentableAddress: this.rentable.address,
-          account: '0x99'
         })
       },
       unlock: function () {
         this.$store.dispatch('unlock', {
-          rentableAddress: this.rentable.address,
-          account: '0x99'
         })
       }
     },
+    data: function () {
+      return {
+        rentableAddress: this.$route.params.address,
+        waiting: false
+      }
+    },
     computed: {
-      rentable () {
-        return this.$store.state.rentables.find((i) => {
-          return i.address === this.$route.params.address
-        })
-      },
-      account () {
-        return this.$store.state.node.accounts[0]
-      },
+      ...mapGetters([
+        'currentRentable',
+        'activeAccount'
+      ]),
       reserveDialog () {
         const now = moment()
         return {
@@ -161,6 +176,12 @@
           duration: 15
         }
       }
+    },
+    beforeCreate () {
+      this.$store.dispatch('loadRentableByAddress', {rentableAddress: this.$route.params.address})
+    },
+    beforeDestroy () {
+      this.$store.dispatch('unloadRentableByAddress', {rentableAddress: this.currentRentable})
     }
   }
 </script>
