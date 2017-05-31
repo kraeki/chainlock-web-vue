@@ -8,7 +8,7 @@
       <h1 class="md-title">{{ $route.meta.title }}</h1>
     </md-toolbar>
 
-    <md-content>
+    <div class="main-content">
       <router-view></router-view>
       <!-- Menu items -->
       <md-sidenav class="md-left" ref="leftSidenav">
@@ -58,7 +58,7 @@
         </div>
       </md-sidenav>
       <!-- End Menu items -->
-    </md-content>
+    </div>
     <md-bottom-bar>
       <md-bottom-bar-item
         href="#/scanner"
@@ -118,7 +118,7 @@
     flex-direction: column;
   }
 
-  md-content {
+  .main-content{
     flex: 1;
   }
 
