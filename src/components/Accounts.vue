@@ -32,8 +32,8 @@
       </md-dialog-content>
 
       <md-dialog-actions>
-        <md-button class="md-primary" @click.native="closePassphraseDialog">Cancel</md-button>
-        <md-button class="md-primary" @click.native="closePassphraseDialog">Unlock</md-button>
+        <md-button class="md-primary" @click.native="closePassphraseDialog(false)">Cancel</md-button>
+        <md-button class="md-primary" @click.native="closePassphraseDialog(true)">Unlock</md-button>
       </md-dialog-actions>
     </md-dialog>
 
@@ -58,7 +58,11 @@ export default {
       this.passphraseDialog.passphrase = ''
       this.$refs.passphraseDialog.open()
     },
-    closePassphraseDialog () {
+    closePassphraseDialog (ret) {
+      if (!ret) {
+        this.$refs.passphraseDialog.close()
+        return
+      }
       this.$store.dispatch('switchAccount', this.passphraseDialog).then((msg) => {
         this.$toasted.success(msg)
         this.$refs.passphraseDialog.close()

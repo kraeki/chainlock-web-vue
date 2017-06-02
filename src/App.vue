@@ -12,7 +12,10 @@
     <vue-toast ref="toast"></vue-toast>
 
     <div class="app-content">
+
       <router-view></router-view>
+      <login></login>
+
       <!-- Menu items -->
       <md-sidenav class="md-left md-fixed" ref="leftSidenav" :md-swipeable="true">
         <md-toolbar class="lokkit-logo" md-theme="white">
@@ -90,9 +93,12 @@
 </template>
 
 <script>
+  import {mapGetters} from 'vuex'
+  import Login from './components/Login.vue'
+
   export default {
     name: 'app',
-    components: {},
+    components: {Login},
     methods: {
       toggleLeftSidenav: function () {
         this.$refs.leftSidenav.toggle()
@@ -102,8 +108,13 @@
         location.reload()
       }
     },
+    computed: mapGetters(['activeAccount']),
     created () {
-      this.$store.dispatch('initialize')
+      this.$store.dispatch('initialize').then((msg) => {
+        this.$toasted.success(msg)
+      }).catch((err) => {
+        this.$toasted.error(err)
+      })
     }
   }
 </script>

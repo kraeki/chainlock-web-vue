@@ -24,10 +24,7 @@ export const store = new Vuex.Store({
         }]
       },
       currentRentable: null,
-      activeAccount: {
-        address: '0x000000000',
-        passphrase: ''
-      },
+      activeAccount: null,
       rentables: [{
         // fields of the contract
         owner: '0x0001000',
@@ -76,7 +73,7 @@ export const store = new Vuex.Store({
       return state.currentRentable
     },
     activeAccount (state) {
-      return state.node.accounts.find((o) => { o.default === true })
+      return state.activeAccount
     },
     getAccounts (state) {
       return state.node.accounts
@@ -87,7 +84,6 @@ export const store = new Vuex.Store({
       const accounts = web3.personal.listAccounts.map((item) => {
         return {address: item, default: false}
       })
-      state.activeAccount = accounts[0]
       state.node.accounts = accounts
     },
     loadRentable (state, data) {
@@ -112,9 +108,11 @@ export const store = new Vuex.Store({
     setActiveAccount (state, {accountAddress, passphrase}) {
       const account = state.node.accounts.find(o => o.address === accountAddress)
 
-      // deactivate current account
-      const currentAccount = state.node.accounts.find(o => o.address === state.activeAccount.address)
-      currentAccount.default = false
+      // deactivate current account if available
+      if (state.activeAccount) {
+        const currentAccount = state.node.accounts.find(o => o.address === state.activeAccount.address)
+        currentAccount.default = false
+      }
 
       // set new active account
       account.default = true
@@ -152,34 +150,44 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
-    initialize (context, data) {
-      const nodeUrl = 'http://' + context.state.node.host + ':' + context.state.node.port
+    initialize ({state, commit, dispatch}, data) {
+      const nodeUrl = 'http://' + state.node.host + ':' + state.node.port
       web3 = new Web3(new Web3.providers.HttpProvider(nodeUrl))
-      try {
+      const p = new Promise((resolve, reject) => {
         rentableService = new EthereumRentableService(web3)
-        context.commit('initialize')
-      } catch (e) {
-        console.error(e)
-        Vue.toasted.error('Could not connect to node "' + nodeUrl + '"')
-        return
-      }
+        commit('initialize')
+
+        // restore activeAccount
+        if (state.activeAccount != null) {
+          dispatch('switchAccount', {
+            accountAddress: state.activeAccount.address,
+            passphrase: state.activeAccount.passphrase
+          })
+        }
+        resolve('Successfully connected to node "' + nodeUrl + '"')
+      })
+      return p
     },
     // data: {account: '0x000', passphrase: '2324', action}
     switchAccount ({commit}, data) {
       return new Promise((resolve, reject) => {
+        console.log('unlockAccount', data)
         web3.personal.unlockAccount(data.accountAddress, data.passphrase)
+        console.log('setActiveAccount', data)
         commit('setActiveAccount', data)
+        console.log('lockAccount again', data)
+        web3.personal.lockAccount(data.accountAddress)
         resolve('Successfully switched')
       })
     },
-    loadRentableByAddress (context, data) {
+    loadRentableByAddress ({commit}, data) {
       // TODO: error handling
       const rentable = rentableService.createRentableFromAddress(data.rentableAddress)
       rentable.startListeningForNewRents((result) => {
-        context.commit('updateReservationsOfRentable', {rentableAddress: data.rentableAddress, reservation: result})
+        commit('updateReservationsOfRentable', {rentableAddress: data.rentableAddress, reservation: result})
       })
 
-      context.commit('loadRentable', {
+      commit('loadRentable', {
         // additional fields
         contract: rentable,
         address: data.rentableAddress,
@@ -193,17 +201,17 @@ export const store = new Vuex.Store({
         reservations: rentable.reservations
       })
     },
-    unloadRentableByAddress (context) {
-      context.state.currentRentable.contract.stopListeningForNewRents()
-      context.commit('unloadRentable')
+    unloadRentableByAddress ({commit, state}) {
+      state.currentRentable.contract.stopListeningForNewRents()
+      commit('unloadRentable')
     },
-    setAccounts (context, data) {
-      context.commit('setAccounts', data)
+    setAccounts ({commit}, data) {
+      commit('setAccounts', data)
     },
     // Loads a contract given by its address from the blockchain
-    addRentable (context, data) {
+    addRentable ({commit}, data) {
       const r = rentableService.createRentableFromAddress(data.address)
-      context.commit('addRentable', {
+      commit('addRentable', {
         // additional fields
         address: data.address,
         locked: false,
@@ -216,24 +224,24 @@ export const store = new Vuex.Store({
         reservations: r.allReservations
       })
     },
-    reserve (context, data) {
-      const rentable = context.state.rentables.find(o => o.address === data.rentableAddress)
+    reserve ({state}, data) {
+      const rentable = state.rentables.find(o => o.address === data.rentableAddress)
       if (rentable.contract.reservedBetween(data.start, data.end)) {
         Vue.toasted.error('There is already a reservation conflicting to this one')
         return
       }
       data.action.actionStart()
       data.action.actionUpdate('Sending transaction')
-      rentable.contract.rent(context.state.activeAccount, '', data.start, data.end, data.action.actionComplete)
+      rentable.contract.rent(state.activeAccount.address, state.activeAccount.passphrase, data.start, data.end, data.action.actionComplete)
     },
-    lock (context, data) {
-      context.commit('lock', data)
+    lock ({commit}, data) {
+      commit('lock', data)
     },
-    unlock (context, data) {
-      context.commit('unlock', data)
+    unlock ({commit}, data) {
+      commit('unlock', data)
     },
-    unclaim (context, data) {
-      context.commit('unclaim', data)
+    unclaim ({commit}, data) {
+      commit('unclaim', data)
     }
   }
 })
