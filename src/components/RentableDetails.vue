@@ -128,10 +128,10 @@
 
         this.$store.dispatch('reserve', {
           action: {
-            actionStart: (state) => {
+            actionStart: (msg) => {
               this.waiting = true
             },
-            actionUpdate: (state) => { this.$toasted.info(state) },
+            actionUpdate: (msg) => { this.$toasted.info(msg) },
             actionComplete: (error, args) => {
               if (error) {
                 this.$toasted.error(args.msg)
