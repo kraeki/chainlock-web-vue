@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="app-header">
-    <md-toolbar>
+    <md-toolbar class="md-accent">
       <md-button class="md-icon-button" @click.native="toggleLeftSidenav">
 	<md-icon>menu</md-icon>
       </md-button>
@@ -66,7 +66,7 @@
 
     <div class="app-footer">
       <md-whiteframe md-elevation="15">
-        <md-bottom-bar>
+        <md-bottom-bar class="md-accent">
           <md-bottom-bar-item
             href="#/scanner"
             md-iconset="mdi mdi-qrcode-scan"

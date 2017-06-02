@@ -10,7 +10,7 @@
           <md-whiteframe>
           <md-list class="md-double-line">
             <md-list-item>
-              <md-avatar class="md-avatar-icon">
+              <md-avatar class="md-avatar-icon md-accent">
                 <md-icon>account_circle</md-icon>
               </md-avatar>
               <div v-if="!passphraseDialog.accountAddress" class="md-list-text-container">
@@ -46,7 +46,7 @@
 
     <md-dialog-actions>
       <md-button class="md-primary" @click.native="closePassphraseDialog(false)">Cancel</md-button>
-      <md-button class="md-primary" @click.native="closePassphraseDialog(true)">Unlock</md-button>
+      <md-button class="md-accent md-raised" @click.native="closePassphraseDialog(true)">Unlock</md-button>
     </md-dialog-actions>
   </md-dialog>
 </template>
