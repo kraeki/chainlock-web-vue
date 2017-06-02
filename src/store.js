@@ -18,10 +18,16 @@ export const store = new Vuex.Store({
         host: 'localhost',
         port: '8545',
         connected: false,
-        accounts: ['0x444444444']
+        accounts: [{
+          address: '0xe0a83a8b5ba5c9acc140f89296187f96a163cf43',
+          default: false
+        }]
       },
       currentRentable: null,
-      activeAccount: null,
+      activeAccount: {
+        address: '0x000000000',
+        passphrase: ''
+      },
       rentables: [{
         // fields of the contract
         owner: '0x0001000',
@@ -70,7 +76,7 @@ export const store = new Vuex.Store({
       return state.currentRentable
     },
     activeAccount (state) {
-      return state.node.accounts[0]
+      return state.node.accounts.find((o) => { o.default === true })
     },
     getAccounts (state) {
       return state.node.accounts
@@ -78,7 +84,9 @@ export const store = new Vuex.Store({
   },
   mutations: {
     initialize (state, data) {
-      const accounts = web3.eth.accounts
+      const accounts = web3.personal.listAccounts.map((item) => {
+        return {address: item, default: false}
+      })
       state.activeAccount = accounts[0]
       state.node.accounts = accounts
     },
@@ -101,8 +109,16 @@ export const store = new Vuex.Store({
     unloadRentable (state) {
       state.currentRentable = null
     },
-    setActiveAccount (state, data) {
-      state.activeAccount = data.accountAddress
+    setActiveAccount (state, {accountAddress, passphrase}) {
+      const account = state.node.accounts.find(o => o.address === accountAddress)
+
+      // deactivate current account
+      const currentAccount = state.node.accounts.find(o => o.address === state.activeAccount.address)
+      currentAccount.default = false
+
+      // set new active account
+      account.default = true
+      state.activeAccount = {...account, passphrase}
     },
     setAccounts (state, data) {
       state.node.accounts = data
@@ -147,6 +163,14 @@ export const store = new Vuex.Store({
         Vue.toasted.error('Could not connect to node "' + nodeUrl + '"')
         return
       }
+    },
+    // data: {account: '0x000', passphrase: '2324', action}
+    switchAccount ({commit}, data) {
+      return new Promise((resolve, reject) => {
+        web3.personal.unlockAccount(data.accountAddress, data.passphrase)
+        commit('setActiveAccount', data)
+        resolve('Successfully switched')
+      })
     },
     loadRentableByAddress (context, data) {
       // TODO: error handling
