@@ -2,7 +2,7 @@
   <div>
     <md-list class="md-double-line">
       <md-list-item v-for="rentable in rentables" :key="rentable.address">
-        <md-avatar class="md-avatar-icon">
+        <md-avatar class="md-avatar-icon md-accent">
           <md-icon style="margin-top:-.13em;"><i class="mdi mdi-qrcode"></i></md-icon>
         </md-avatar>
         <div class="md-list-text-container">

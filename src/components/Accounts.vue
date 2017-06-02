@@ -2,7 +2,7 @@
   <div>
     <md-list class="md-double-line">
       <md-list-item v-for="account in accounts" :key="account">
-        <md-avatar class="md-avatar-icon">
+        <md-avatar class="md-avatar-icon md-accent">
           <md-icon>account_circle</md-icon>
         </md-avatar>
         <div class="md-list-text-container">
@@ -12,7 +12,7 @@
           </p>
         </div>
         <md-button @click.native="openPassphraseDialog(account.address)" :value="account.address" class="md-icon-button md-list-action">
-          <md-icon v-if="account.default">lock_open</md-icon>
+          <md-icon v-if="account.default" class="md-accent">lock_open</md-icon>
           <md-icon v-else>locked</md-icon>
         </md-button>
         <md-divider class="md-inset"></md-divider>

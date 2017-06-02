@@ -33,8 +33,8 @@
           </div>
         </md-card-content>
         <md-card-actions>
-	  <md-button v-if="!currentRentable.locked" @click.native="lock">Lock</md-button>
-	  <md-button v-if="currentRentable.locked" @click.native="unlock">Unlock</md-button>
+	  <md-button @click.native="lock" class="md-raised md-accent">Lock</md-button>
+	  <md-button @click.native="unlock" class="md-raised md-primary">Unlock</md-button>
         </md-card-actions>
       </md-card-area>
     </md-card>
@@ -50,7 +50,7 @@
         </md-card-content>
       </md-card-area>
       <md-card-actions>
-	<md-button @click.native="openDialog('reserveDialog')">Reserve</md-button>
+	<md-button @click.native="openDialog('reserveDialog')" class="md-raised md-accent">Reserve</md-button>
       </md-card-actions>
     </md-card>
 
@@ -61,12 +61,12 @@
       <md-dialog-content>
         <form v-on:submit.prevent="reserve">
           <md-input-container>
-            <md-icon>event</md-icon>
+            <md-icon class="md-accent">event</md-icon>
             <label>Date</label>
             <md-input v-model="reserveDialog.fromDate" type="date" :disabled="waiting"></md-input>
           </md-input-container>
           <md-input-container>
-            <md-icon>schedule</md-icon>
+            <md-icon class="md-accent">schedule</md-icon>
             <label>Time</label>
             <md-input v-model="reserveDialog.fromTime" type="time" :disabled="waiting"></md-input>
           </md-input-container>
@@ -74,7 +74,7 @@
           <md-layout md-gutter>
             <md-layout>
               <md-input-container>
-                <md-icon>update</md-icon>
+                <md-icon class="md-accent">update</md-icon>
                 <label>Duration</label>
                 <md-input v-model="reserveDialog.duration" type="number" :disabled="waiting"></md-input>
               </md-input-container>
@@ -98,7 +98,7 @@
 
       <md-dialog-actions>
         <md-button class="md-primary" @click.native="closeDialog('reserveDialog')">Cancel</md-button>
-        <md-button :disabled="waiting" class="md-primary" @click.native="reserve">
+        <md-button :disabled="waiting" class="md-raised md-accent" @click.native="reserve">
           Reserve
           <md-progress v-show="waiting" class="md-accent" md-indeterminate></md-progress>
         </md-button>
