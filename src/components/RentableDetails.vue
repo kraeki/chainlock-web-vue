@@ -59,7 +59,7 @@
       <md-progress v-show="waiting" class="md-accent" md-indeterminate></md-progress>
 
       <md-dialog-content>
-        <form>
+        <form v-on:submit.prevent="reserve">
           <md-input-container>
             <md-icon>event</md-icon>
             <label>Date</label>
