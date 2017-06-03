@@ -57,6 +57,10 @@
           </md-list-item>
           <md-divider class="md-inset"></md-divider>
           <md-subheader>Settings</md-subheader>
+          <md-list-item @click.native="goto('Network')">
+            <md-icon>language</md-icon>
+            <span>Change Network</span>
+          </md-list-item>
           <md-list-item @click.native="resetLocalStorage">
             <md-icon>reset</md-icon>
             <span>Reset Storage</span>

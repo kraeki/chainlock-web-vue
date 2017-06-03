@@ -4,6 +4,7 @@ import Root from '@/components/Root'
 import Scanner from '@/components/Scanner'
 import RentableDetails from '@/components/RentableDetails'
 import Accounts from '@/components/Accounts'
+import Network from '@/components/Network'
 
 Vue.use(Router)
 
@@ -31,6 +32,14 @@ export default new Router({
       component: RentableDetails,
       meta: {
         title: 'Detail of Rentable'
+      }
+    },
+    {
+      path: '/network',
+      name: 'Network',
+      component: Network,
+      meta: {
+        title: 'Network information'
       }
     },
     {

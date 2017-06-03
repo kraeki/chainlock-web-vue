@@ -15,9 +15,10 @@ export const store = new Vuex.Store({
     namespace: 'lokkit-webapp-state',
     initialState: {
       node: {
-        host: 'localhost',
-        port: '8545',
+        url: 'http://localhost:8545',
         connected: false,
+        blockNumber: 222,
+        version: '1.1.2',
         accounts: [{
           address: '0xe0a83a8b5ba5c9acc140f89296187f96a163cf43',
           default: false
@@ -66,6 +67,9 @@ export const store = new Vuex.Store({
     expires: 7 * 24 * 60 * 30 * 1e3
   })],
   getters: {
+    nodeInformation (state) {
+      return state.node
+    },
     getRentables (state) {
       return state.rentables
     },
@@ -80,7 +84,13 @@ export const store = new Vuex.Store({
     }
   },
   mutations: {
-    initialize (state, data) {
+    setNode (state, url) {
+      state.node.url = url
+    },
+    setConnectionStatus (state, connected) {
+      state.node.connected = connected
+    },
+    setAccounts (state, data) {
       const accounts = web3.personal.listAccounts.map((item) => {
         return {address: item, default: false}
       })
@@ -118,9 +128,6 @@ export const store = new Vuex.Store({
       account.default = true
       state.activeAccount = {...account, passphrase}
     },
-    setAccounts (state, data) {
-      state.node.accounts = data
-    },
     addRentable (state, data) {
       const existingRentable = state.rentable.find(o => o.address === data.rentableAddress)
       if (existingRentable) {
@@ -151,23 +158,51 @@ export const store = new Vuex.Store({
   },
   actions: {
     initialize ({state, commit, dispatch}, data) {
-      const nodeUrl = 'http://' + state.node.host + ':' + state.node.port
-      web3 = new Web3(new Web3.providers.HttpProvider(nodeUrl))
-      const p = new Promise((resolve, reject) => {
-        rentableService = new EthereumRentableService(web3)
-        commit('initialize')
+      const url = state.node.url
+      console.log('Debug: initialization: ', url, state.node, 'activeAccount:', state.activeAccount)
+      return new Promise((resolve, reject) => {
+        return dispatch('connectToNode', {url}).then((result) => {
+          // restore activeAccount
+          if (state.activeAccount != null) {
+            dispatch('switchAccount', {
+              accountAddress: state.activeAccount.address,
+              passphrase: state.activeAccount.passphrase
+            })
+          }
+          resolve(result)
+        }).catch((err) => {
+          reject(err)
+        })
+      })
+    },
 
-        // restore activeAccount
-        if (state.activeAccount != null) {
-          dispatch('switchAccount', {
-            accountAddress: state.activeAccount.address,
-            passphrase: state.activeAccount.passphrase
-          })
+    connectToNode ({state, commit, dispatch}, {url}) {
+      const oldUrl = state.node.url // save for recover
+      commit('setNode', url)
+      commit('setConnectionStatus', false)
+      web3 = new Web3(new Web3.providers.HttpProvider(url))
+      const p = new Promise((resolve, reject) => {
+        try {
+          rentableService = new EthereumRentableService(web3)
+          commit('setAccounts')
+
+          // restore activeAccount
+          if (state.activeAccount != null) {
+            dispatch('switchAccount', {
+              accountAddress: state.activeAccount.address,
+              passphrase: state.activeAccount.passphrase
+            })
+          }
+          resolve('Successfully connected to node "' + url + '"')
+          commit('setConnectionStatus', true)
+        } catch (err) {
+          commit('setNode', oldUrl)
+          reject(err)
         }
-        resolve('Successfully connected to node "' + nodeUrl + '"')
       })
       return p
     },
+
     // data: {account: '0x000', passphrase: '2324', action}
     switchAccount ({commit}, data) {
       return new Promise((resolve, reject) => {
@@ -211,6 +246,7 @@ export const store = new Vuex.Store({
       commit('unloadRentable')
     },
     setAccounts ({commit}, data) {
+      // TODO: get balance and attach to account
       commit('setAccounts', data)
     },
     // Loads a contract given by its address from the blockchain
