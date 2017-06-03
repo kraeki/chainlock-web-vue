@@ -180,25 +180,30 @@ export const store = new Vuex.Store({
         resolve('Successfully switched')
       })
     },
-    loadRentableByAddress ({commit}, data) {
-      // TODO: error handling
-      const rentable = rentableService.createRentableFromAddress(data.rentableAddress)
-      rentable.startListeningForNewRents((result) => {
-        commit('updateReservationsOfRentable', {rentableAddress: data.rentableAddress, reservation: result})
-      })
+    loadRentableByAddress ({commit}, {rentableAddress}) {
+      return new Promise((resolve, reject) => {
+        // this thows an error if rentableAddress is not valid
+        const rentable = rentableService.createRentableFromAddress(rentableAddress)
 
-      commit('loadRentable', {
-        // additional fields
-        contract: rentable,
-        address: data.rentableAddress,
-        locked: false,
-        // fields of contract
-        owner: rentable.owner,
-        description: rentable.description,
-        location: rentable.location,
-        costPerSecond: rentable.costPerSecond,
-        deposit: rentable.deposit,
-        reservations: rentable.reservations
+        // Register callback for live reservation updates
+        rentable.startListeningForNewRents((result) => {
+          commit('updateReservationsOfRentable', {rentableAddress: rentableAddress, reservation: result})
+        })
+
+        commit('loadRentable', {
+          // additional fields
+          contract: rentable,
+          address: rentableAddress,
+          locked: false,
+          // fields of contract
+          owner: rentable.owner,
+          description: rentable.description,
+          location: rentable.location,
+          costPerSecond: rentable.costPerSecond,
+          deposit: rentable.deposit,
+          reservations: rentable.reservations
+        })
+        resolve('Rentable successfully loaded')
       })
     },
     unloadRentableByAddress ({commit, state}) {

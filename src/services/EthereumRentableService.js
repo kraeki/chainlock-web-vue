@@ -19,18 +19,14 @@ export default class EthereumRentableService {
 
   createRentableFromAddress (rentableAddress) {
     const self = this
-    function rentableFromAddress (rentableAddress) {
-      var contract = self.rentableContract.at(rentableAddress)
-      try {
-        contract.owner() // todo: check if the address really is a rentable.
-        return contract
-      } catch (error) {
-        console.log(JSON.stringify(error))
-        throw error
-      }
+    const rentable = self.rentableContract.at(rentableAddress)
+    // FIXME: detect address is a real contract
+    // Maybe add a method to the contract to check if it is valid
+    // For now we miss use owner() wich retunrs '0x' if invalid address
+    console.log('hehehehhehehehehe', rentable.owner())
+    if (rentable.owner() === '0x') {
+      throw new Error('The address "' + rentableAddress + '" does not seem to be a valid rentable')
     }
-
-    const rentable = rentableFromAddress(rentableAddress)
 
     function normalizeReservations (reservations) {
       return reservations.map(item => {
