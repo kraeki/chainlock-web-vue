@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Root from '@/components/Root'
+import RentablesOverview from '@/components/RentablesOverview'
 import Scanner from '@/components/Scanner'
 import RentableDetails from '@/components/RentableDetails'
 import Accounts from '@/components/Accounts'
@@ -13,7 +13,7 @@ export default new Router({
     {
       path: '/',
       name: 'Rentables',
-      component: Root,
+      component: RentablesOverview,
       meta: {
         title: 'Rentables'
       }

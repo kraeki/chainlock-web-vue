@@ -25,7 +25,7 @@
 import {mapGetters} from 'vuex'
 
 export default {
-  name: 'Root',
+  name: 'RentablesOverview',
   props: {},
   components: {},
   computed: mapGetters({
