@@ -19,11 +19,11 @@
     },
     computed: {
       addressStart () {
-        return this.address.substring(0, 8)
+        return this.address.substring(0, 7)
       },
       addressEnd () {
         const length = this.address.length
-        return this.address.substring(length - 6)
+        return this.address.substring(length - 5)
       }
     }
   }

@@ -22,10 +22,9 @@
           <img src="static/lokkit_icon_400.png" alt="lokkit logo"/>
           <md-list class="md-double-line" style="margin-top:1em">
             <md-list-item v-if="activeAccount == null">
-              <md-icon class="md-accent md-size-2x">error</md-icon>
+              <md-icon class="md-warn md-size-2x">error</md-icon>
               <div>
                 <span>Error, no account logged in</span>
-                <span class="md-caption">0494949 Ether</span>
               </div>
               <md-button @click.native="toggleAccountsList" class="md-icon-button md-list-action">
                 <md-icon v-if="showAccountsList">arrow_drop_up</md-icon>
@@ -34,9 +33,9 @@
             </md-list-item>
             <md-list-item v-else>
               <md-icon class="md-accent md-size-2x">account_circle</md-icon>
-              <div>
+              <div class="md-list-text-container">
                 <lk-address :address="activeAccount.address" />
-                <span class="md-caption">0494949 Ether</span>
+                <span>Ξ {{activeAccount.balance}}</span>
               </div>
               <md-button @click.native="toggleAccountsList" class="md-icon-button md-list-action">
                 <md-icon v-if="showAccountsList">arrow_drop_up</md-icon>

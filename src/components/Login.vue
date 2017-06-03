@@ -23,7 +23,7 @@
               <!-- Show selected account -->
               <div v-else class="md-list-text-container">
                 <lk-address :address="passphraseDialog.accountAddress"/>
-                <span>{{passphraseDialog.balance}} Ether</span>
+                  <span>Ξ {{passphraseDialog.accountBalance}}</span>
               </div>
 
               <md-button class="md-icon-button" md-menu-trigger>

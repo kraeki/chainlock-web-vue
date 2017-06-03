@@ -90,11 +90,10 @@ export const store = new Vuex.Store({
     setConnectionStatus (state, connected) {
       state.node.connected = connected
     },
-    setAccounts (state, data) {
-      const accounts = web3.personal.listAccounts.map((item) => {
-        return {address: item, default: false}
+    setAccounts (state, accounts) {
+      state.node.accounts = accounts.map((item) => {
+        return {...item, default: false}
       })
-      state.node.accounts = accounts
     },
     loadRentable (state, data) {
       if (data != null) {
@@ -184,7 +183,7 @@ export const store = new Vuex.Store({
       const p = new Promise((resolve, reject) => {
         try {
           rentableService = new EthereumRentableService(web3)
-          commit('setAccounts')
+          commit('setAccounts', rentableService.getAccountsWithBalance())
 
           // restore activeAccount
           if (state.activeAccount != null) {
@@ -206,11 +205,8 @@ export const store = new Vuex.Store({
     // data: {account: '0x000', passphrase: '2324', action}
     switchAccount ({commit}, data) {
       return new Promise((resolve, reject) => {
-        console.log('unlockAccount', data)
         web3.personal.unlockAccount(data.accountAddress, data.passphrase)
-        console.log('setActiveAccount', data)
         commit('setActiveAccount', data)
-        console.log('lockAccount again', data)
         web3.personal.lockAccount(data.accountAddress)
         resolve('Successfully switched')
       })
@@ -244,10 +240,6 @@ export const store = new Vuex.Store({
     unloadRentableByAddress ({commit, state}) {
       state.currentRentable.contract.stopListeningForNewRents()
       commit('unloadRentable')
-    },
-    setAccounts ({commit}, data) {
-      // TODO: get balance and attach to account
-      commit('setAccounts', data)
     },
     // Loads a contract given by its address from the blockchain
     addRentable ({commit}, data) {

@@ -11,7 +11,7 @@
         <div class="md-list-text-container">
           <span>{{account.address}}</span>
           <p>
-            <md-icon md-iconset="mdi mdi-qrcode" />{{account.address}}
+            Ξ {{account.balance}}
           </p>
         </div>
         <md-button @click.native="openPassphraseDialog(account.address)" :value="account.address" class="md-icon-button md-list-action">

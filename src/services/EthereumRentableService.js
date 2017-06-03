@@ -17,6 +17,16 @@ export default class EthereumRentableService {
     this.privateKey = this.web3.shh.getPrivateKey(this.asymmetricKeyAddress)
   }
 
+  getAccountsWithBalance () {
+    return this.web3.personal.listAccounts.map((item) => {
+      return {
+        address: item,
+        balance: this.web3.fromWei(this.web3.eth.getBalance(item), 'ether').valueOf(),
+        default: false
+      }
+    })
+  }
+
   createRentableFromAddress (rentableAddress) {
     const self = this
     const rentable = self.rentableContract.at(rentableAddress)
