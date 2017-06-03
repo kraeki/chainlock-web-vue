@@ -39,7 +39,7 @@ export default new Router({
       name: 'Network',
       component: Network,
       meta: {
-        title: 'Network information'
+        title: 'Network Information'
       }
     },
     {

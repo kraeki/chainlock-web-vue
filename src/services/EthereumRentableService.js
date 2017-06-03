@@ -17,6 +17,18 @@ export default class EthereumRentableService {
     this.privateKey = this.web3.shh.getPrivateKey(this.asymmetricKeyAddress)
   }
 
+  getNodeInformation () {
+    console.log(this.web3)
+    const info = this.web3.version
+    return {
+      name: info.node,
+      blockNumber: this.web3.eth.blockNumber,
+      gasPrice: this.web3.eth.gasPrice,
+      network: info.network,
+      whisper: info.whisper
+    }
+  }
+
   getAccountsWithBalance () {
     return this.web3.personal.listAccounts.map((item) => {
       return {

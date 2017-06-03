@@ -95,6 +95,9 @@ export const store = new Vuex.Store({
         return {...item, default: false}
       })
     },
+    setNodeInformation (state, nodeInformation) {
+      state.node = {...state.node, ...nodeInformation}
+    },
     loadRentable (state, data) {
       if (data != null) {
         const existingRentable = state.rentables.find(o => o.address === data.address)
@@ -183,7 +186,10 @@ export const store = new Vuex.Store({
       const p = new Promise((resolve, reject) => {
         try {
           rentableService = new EthereumRentableService(web3)
+
+          // Fetch node information
           commit('setAccounts', rentableService.getAccountsWithBalance())
+          commit('setNodeInformation', rentableService.getNodeInformation())
 
           // restore activeAccount
           if (state.activeAccount != null) {

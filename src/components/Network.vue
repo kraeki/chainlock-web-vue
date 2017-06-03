@@ -17,26 +17,58 @@
             </div>
           </md-card-header-text>
           <md-card-media>
-            <md-icon class="md-size-3x">language</md-icon>
+            <md-icon class="md-size-3x md-accent">language</md-icon>
           </md-card-media>
         </md-card-header>
 
         <md-card-content>
-          <div class="card-reservation">
-            <md-icon>cloud_done</md-icon>
-            Connected:
-            {{nodeInformation.connected}}
-          </div>
-          <div class="card-reservation">
-            <md-icon>label_outline</md-icon>
-            Version:
-            {{nodeInformation.version}}
-          </div>
-          <div class="card-reservation">
-            <md-icon>widgets</md-icon>
-            {{nodeInformation.blockNumber}}
-          </div>
+          <md-list class="md-double-line">
+            <md-list-item>
+              <div class="md-list-text-container">
+                <span>Node Version</span>
+                <span style="white-space: normal">{{nodeInformation.name}}</span>
+              </div>
+              <md-divider/>
+            </md-list-item>
+
+            <md-list-item>
+              <div class="md-list-text-container">
+                <span>Network ID</span>
+                <span>{{nodeInformation.network}}</span>
+              </div>
+              <md-divider/>
+            </md-list-item>
+
+            <md-list-item>
+              <div class="md-list-text-container">
+                <span>Connection Status</span>
+                <span>{{nodeInformation.connected}}</span>
+              </div>
+              <md-icon v-if="!nodeInformation.connected" class="md-warn">warning</md-icon>
+              <md-divider/>
+            </md-list-item>
+
+            <md-list-item>
+              <div class="md-list-text-container">
+                <span>Block Number</span>
+                <span>{{nodeInformation.blockNumber}}</span>
+              </div>
+              <md-button @click.native="connectToNode" class="md-icon-button md-list-action">
+                <md-icon>refresh</md-icon>
+              </md-button>
+              <md-divider/>
+            </md-list-item>
+
+            <md-list-item>
+              <div class="md-list-text-container">
+                <span>Whisper Protocol</span>
+                <span>{{nodeInformation.whisper}}</span>
+              </div>
+              <md-divider/>
+            </md-list-item>
+          </md-list>
         </md-card-content>
+
         <md-card-actions>
 	  <md-button @click.native="openDialog('changeNetworkDialog')" class="md-raised md-accent">Change Network</md-button>
         </md-card-actions>
@@ -128,16 +160,4 @@
 </script>
 
 <style scoped>
-  .card-reservation {
-    margin-top: 8px;
-
-    .md-icon {
-      margin: 28px;
-      color: rgba(#000, .54) !important;
-    }
-
-    .md-button {
-      border-radius: 2px !important;
-    }
-  }
 </style>

@@ -49,7 +49,9 @@
     </md-dialog-content>
 
     <md-dialog-actions>
-      <md-button class="md-primary" @click.native="closePassphraseDialog(false)">Cancel</md-button>
+      <md-button class="md-primary" @click.native="goto('Network')">Network</md-button>
+      <span style="flex: 1"></span>
+      <md-button class="md-primary" >Cancel</md-button>
       <md-button class="md-accent md-raised" @click.native="closePassphraseDialog(true)">Unlock</md-button>
     </md-dialog-actions>
   </md-dialog>
@@ -76,6 +78,10 @@
       setAccount (accountAddress, accountBalance) {
         this.passphraseDialog.accountAddress = accountAddress
         this.passphraseDialog.accountBalance = accountBalance
+      },
+      goto: function (routeName) {
+        this.$refs.passphraseDialog.close()
+        this.$router.push({name: routeName})
       },
       closePassphraseDialog (result) {
         if (!result) {

@@ -58,7 +58,8 @@
           <md-subheader>Settings</md-subheader>
           <md-list-item @click.native="goto('Network')">
             <md-icon>language</md-icon>
-            <span>Change Network</span>
+            <span>Network</span>
+            <md-icon v-if="!nodeInformation.connected" class="md-warn">warning</md-icon>
           </md-list-item>
           <md-list-item @click.native="resetLocalStorage">
             <md-icon>reset</md-icon>
@@ -122,7 +123,7 @@
         location.reload()
       }
     },
-    computed: mapGetters(['activeAccount']),
+    computed: mapGetters(['activeAccount', 'nodeInformation']),
     data: function () {
       return {
         showAccountsList: false
