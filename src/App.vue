@@ -17,6 +17,7 @@
       <login></login>
 
       <!-- Menu items -->
+      <!-- TODO: Move sidenav into own component -->
       <md-sidenav class="md-left md-fixed" ref="leftSidenav" :md-swipeable="true">
         <md-toolbar class="lokkit-logo" md-theme="white">
           <img src="static/lokkit_icon_400.png" alt="lokkit logo"/>
@@ -71,6 +72,7 @@
     </div>
 
     <div class="app-footer">
+      <!-- FIXME: Fix double active -->
       <md-whiteframe md-elevation="15">
         <md-bottom-bar class="md-accent">
           <md-bottom-bar-item
