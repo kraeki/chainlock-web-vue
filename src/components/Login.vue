@@ -5,23 +5,27 @@
     <md-dialog-content>
       <form novalidate @submit.stop.prevent="closePassphraseDialog">
 
-        <md-menu md-size="7" md-direction="bottom left" :md-close-on-select="true">
+        <md-menu md-size="5" md-direction="bottom left" :md-close-on-select="true">
 
           <md-whiteframe>
           <md-list class="md-double-line">
             <md-list-item>
+
               <md-avatar class="md-avatar-icon md-accent">
                 <md-icon>account_circle</md-icon>
               </md-avatar>
+
+              <!-- Default entry "Choose an account" -->
               <div v-if="!passphraseDialog.accountAddress" class="md-list-text-container">
-                <span>0xc00d0f0asd0f0asd0f0asdf0as0df0</span>
-                <p>
-                <md-icon>attach_money</md-icon>59345848449
-                </p>
+                <span>Choose an account</span>
               </div>
+
+              <!-- Show selected account -->
               <div v-else class="md-list-text-container">
-                <span>{{passphraseDialog.accountAddress}}</span>
+                <lk-address :address="passphraseDialog.accountAddress"/>
+                <span>{{passphraseDialog.balance}} Ether</span>
               </div>
+
               <md-button class="md-icon-button" md-menu-trigger>
                 <md-icon>expand_more</md-icon>
               </md-button>
@@ -30,14 +34,14 @@
           </md-whiteframe>
 
           <md-menu-content>
-            <md-menu-item @click.native="setAccount(account.address)" v-for="account in getAccounts" :key="account.address">
+            <md-menu-item @click.native="setAccount(account.address, account.balance)" v-for="account in getAccounts" :key="account.address">
               <md-icon>account_circle</md-icon>
-              <span>{{account.address}}</span>
+              <lk-address :address="account.address"/>
             </md-menu-item>
           </md-menu-content>
         </md-menu>
 
-        <md-input-container md-theme="green" md-has-password>
+        <md-input-container md-has-password>
           <label>Account's passphrase</label>
           <md-input v-model="passphraseDialog.passphrase" type="password"></md-input>
         </md-input-container>
@@ -53,13 +57,13 @@
 
 <script>
   import {mapGetters} from 'vuex'
+  import lkAddress from './Address.vue'
 
   export default {
     name: 'Login',
-    components: {},
+    components: {lkAddress},
     computed: mapGetters(['activeAccount', 'getAccounts']),
     mounted () {
-      console.log(typeof (this))
       if (!this.activeAccount) {
         // this.passphraseDialog.accountAddress = accountAddress
         this.passphraseDialog.passphrase = ''
@@ -69,8 +73,9 @@
       }
     },
     methods: {
-      setAccount (accountAddress) {
+      setAccount (accountAddress, accountBalance) {
         this.passphraseDialog.accountAddress = accountAddress
+        this.passphraseDialog.accountBalance = accountBalance
       },
       closePassphraseDialog (result) {
         if (!result) {
@@ -89,6 +94,7 @@
       return {
         passphraseDialog: {
           accountAddress: null,
+          balance: '',
           passphrase: ''
         }
 

@@ -21,10 +21,21 @@
         <md-toolbar class="lokkit-logo" md-theme="white">
           <img src="static/lokkit_icon_400.png" alt="lokkit logo"/>
           <md-list class="md-double-line" style="margin-top:1em">
-            <md-list-item>
+            <md-list-item v-if="activeAccount == null">
+              <md-icon class="md-accent md-size-2x">error</md-icon>
+              <div>
+                <span>Error, no account logged in</span>
+                <span class="md-caption">0494949 Ether</span>
+              </div>
+              <md-button @click.native="toggleAccountsList" class="md-icon-button md-list-action">
+                <md-icon v-if="showAccountsList">arrow_drop_up</md-icon>
+                <md-icon v-else>arrow_drop_down</md-icon>
+              </md-button>
+            </md-list-item>
+            <md-list-item v-else>
               <md-icon class="md-accent md-size-2x">account_circle</md-icon>
               <div>
-                <span>0x0sdf0...0000f</span>
+                <lk-address :address="activeAccount.address" />
                 <span class="md-caption">0494949 Ether</span>
               </div>
               <md-button @click.native="toggleAccountsList" class="md-icon-button md-list-action">
@@ -87,10 +98,11 @@
   import {mapGetters} from 'vuex'
   import Login from './components/Login.vue'
   import Accounts from './components/Accounts.vue'
+  import lkAddress from './components/Address.vue'
 
   export default {
     name: 'app',
-    components: {Login, Accounts},
+    components: {Login, Accounts, lkAddress},
     methods: {
       toggleLeftSidenav: function () {
         this.$refs.leftSidenav.toggle()

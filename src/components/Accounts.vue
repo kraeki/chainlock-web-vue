@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div v-if="accounts.length == 0">
+      No accounts found on this node
+    </div>
     <md-list class="md-double-line">
       <md-list-item v-for="account in accounts" :key="account">
         <md-avatar class="md-avatar-icon md-accent">
