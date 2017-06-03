@@ -15,6 +15,7 @@
       this.video = this.$refs.video
       this.canvas = this.$refs.canvas
       this.context = this.canvas.getContext('2d')
+      this.up = true // to control decode loop
 
       // try get the back facing camera. using "options=true" will start the default camera (front on mobile devices)
       var options = true
@@ -23,7 +24,7 @@
       .then(function (devices) {
         devices.forEach(function (device) {
           if (device.kind === 'videoinput') {
-            console.log('found camera: ' + device.label + ' (id: ' + device.deviceId + ')')
+            console.log('Debug: found camera: ' + device.label + ' (id: ' + device.deviceId + ')')
             if (device.label.toLowerCase().search('back') > -1) {
               options = { 'deviceId': { 'exact': device.deviceId }, 'facingMode': 'environment' }
               console.log('will use camera: ' + device.label + ' (id: ' + device.deviceId + ')')
@@ -67,8 +68,10 @@
               self.qrcode.callback = function (error, result) {
                 if (error !== undefined) {
                   console.log('Error while decoding: ' + error)
-                  console.log('Try again...')
-                  setTimeout(self.captureToCanvasAndDecode, 500)
+                  if (self.up) {
+                    console.log('Try again...')
+                    setTimeout(self.captureToCanvasAndDecode, 500)
+                  }
                   return
                 }
 
@@ -97,11 +100,10 @@
       })
     },
     beforeDestroy () {
-      console.log('beforeDestroy')
+      this.up = false
       this.video.pause()
       this.video.src = ''
       this.stream.getTracks()[0].stop()
-      console.log('beforeDestroy done')
     }
   }
 </script>
