@@ -149,25 +149,19 @@
         const from = moment(this.reserveDialog.fromDate + ' ' + this.reserveDialog.fromTime)
         const to = from.clone().add(this.reserveDialog.duration, this.reserveDialog.unit)
 
+        this.waiting = true
+        this.$toasted.info('Sending transaction')
         this.$store.dispatch('reserve', {
-          action: {
-            actionStart: (msg) => {
-              this.waiting = true
-            },
-            actionUpdate: (msg) => { this.$toasted.info(msg) },
-            actionComplete: (error, args) => {
-              if (error) {
-                this.$toasted.error(args.msg)
-              } else {
-                this.$toasted.success(args.msg)
-                this.closeDialog('reserveDialog')
-              }
-              this.waiting = false
-            }
-          },
           rentableAddress: this.currentRentable.address,
           start: from.unix(),
           end: to.unix()
+        }).then((msg) => {
+          this.waiting = false
+          this.$toasted.success(msg)
+          this.closeDialog('reserveDialog')
+        }).catch((err) => {
+          this.waiting = false
+          this.$toasted.error(err)
         })
       },
       lock: function () {

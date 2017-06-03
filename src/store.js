@@ -139,14 +139,6 @@ export const store = new Vuex.Store({
       }
       state.rentables.push(data)
     },
-    reserve (state, data) {
-      const rentable = state.rentables.find(o => o.address === data.rentableAddress)
-      rentable.reservations.push({
-        start: data.start,
-        end: data.end,
-        renter: data.account
-      })
-    },
     lock (state, data) {
       const rentable = state.rentables.find(o => o.address === data.rentableAddress)
       rentable.locked = true
@@ -263,15 +255,24 @@ export const store = new Vuex.Store({
         reservations: r.allReservations
       })
     },
-    reserve ({state}, data) {
-      const rentable = state.rentables.find(o => o.address === data.rentableAddress)
-      if (rentable.contract.reservedBetween(data.start, data.end)) {
-        Vue.toasted.error('There is already a reservation conflicting to this one')
-        return
-      }
-      data.action.actionStart()
-      data.action.actionUpdate('Sending transaction')
-      rentable.contract.rent(state.activeAccount.address, state.activeAccount.passphrase, data.start, data.end, data.action.actionComplete)
+    reserve ({state}, {rentableAddress, start, end}) {
+      return new Promise((resolve, reject) => {
+        const rentable = state.rentables.find(o => o.address === rentableAddress)
+        if (rentable == null) {
+          reject('Rentable with address "' + rentableAddress + '" not found')
+        }
+        if (rentable.contract.reservedBetween(start, end)) {
+          reject('There is already a reservation conflicting to this one')
+        }
+
+        // Send transaction
+        rentable.contract.rent(state.activeAccount.address, state.activeAccount.passphrase,
+            start, end,
+            (err, args) => {
+              if (err) { reject(args.msg) }
+              resolve(err, args.msg)
+            })
+      })
     },
     lock ({commit}, data) {
       commit('lock', data)
