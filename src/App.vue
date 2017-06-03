@@ -20,46 +20,37 @@
       <md-sidenav class="md-left md-fixed" ref="leftSidenav" :md-swipeable="true">
         <md-toolbar class="lokkit-logo" md-theme="white">
           <img src="static/lokkit_icon_400.png" alt="lokkit logo"/>
-          <span>Lokkit Menu</span>
+          <md-list class="md-double-line" style="margin-top:1em">
+            <md-list-item>
+              <md-icon class="md-accent md-size-2x">account_circle</md-icon>
+              <div>
+                <span>0x0sdf0...0000f</span>
+                <span class="md-caption">0494949 Ether</span>
+              </div>
+              <md-button @click.native="toggleAccountsList" class="md-icon-button md-list-action">
+                <md-icon v-if="showAccountsList">arrow_drop_up</md-icon>
+                <md-icon v-else>arrow_drop_down</md-icon>
+              </md-button>
+            </md-list-item>
+          </md-list>
         </md-toolbar>
-
-        <div class="md-list-expand-container">
-          <ul class="md-list">
-            <li class="md-list-item">
-              <a href="#/scanner"
-                v-on:click='toggleLeftSidenav'
-                class="md-list-item-container md-button">
-                <md-icon><i class="mdi mdi-qrcode-scan"></i></md-icon>
-                <span>Scan</span>
-              </a>
-            </li>
-            <li class="md-list-item">
-              <a href="/#"
-                v-on:click='toggleLeftSidenav'
-                class="md-list-item-container md-button">
-                <md-icon><i class="mdi mdi-book-multiple-variant"></i></md-icon>
-                <span>My lockers</span>
-              </a>
-            </li>
-            <li class="md-list-item">
-              <a href="#/accounts"
-                v-on:click='toggleLeftSidenav'
-                class="md-list-item-container md-button">
-                <md-icon>account_box</md-icon>
-                <span>Account</span>
-              </a>
-            </li>
-            <md-divider class="md-inset"></md-divider>
-            <li class="md-list-item">
-              <a href=""
-                v-on:click='resetLocalStorage'
-                class="md-list-item-container md-button">
-                <md-icon>reset</md-icon>
-                <span>Reset Storage</span>
-              </a>
-            </li>
-          </ul>
-        </div>
+        <accounts v-if="showAccountsList"/>
+        <md-list>
+          <md-list-item @click.native="goto('Scanner')">
+            <md-icon><i class="mdi mdi-qrcode-scan"></i></md-icon>
+            <span>Scan</span>
+          </md-list-item>
+          <md-list-item @click.native="goto('Rentables')">
+            <md-icon><i class="mdi mdi-book-multiple-variant"></i></md-icon>
+            <span>My lockers</span>
+          </md-list-item>
+          <md-divider class="md-inset"></md-divider>
+          <md-subheader>Settings</md-subheader>
+          <md-list-item @click.native="resetLocalStorage">
+            <md-icon>reset</md-icon>
+            <span>Reset Storage</span>
+          </md-list-item>
+        </md-list>
       </md-sidenav>
       <!-- End Menu items -->
     </div>
@@ -95,13 +86,21 @@
 <script>
   import {mapGetters} from 'vuex'
   import Login from './components/Login.vue'
+  import Accounts from './components/Accounts.vue'
 
   export default {
     name: 'app',
-    components: {Login},
+    components: {Login, Accounts},
     methods: {
       toggleLeftSidenav: function () {
         this.$refs.leftSidenav.toggle()
+      },
+      goto: function (routeName) {
+        this.$refs.leftSidenav.close()
+        this.$router.push({name: routeName})
+      },
+      toggleAccountsList: function () {
+        this.showAccountsList = !this.showAccountsList
       },
       resetLocalStorage: function () {
         localStorage.clear()
@@ -109,6 +108,11 @@
       }
     },
     computed: mapGetters(['activeAccount']),
+    data: function () {
+      return {
+        showAccountsList: false
+      }
+    },
     created () {
       this.$store.dispatch('initialize').then((msg) => {
         this.$toasted.success(msg)
@@ -156,15 +160,13 @@
  /* Sidenav */
   .lokkit-logo {
     width:100%;
-    font-size: 24px;
     vertical-align: center;
     text-align: center;
     border-bottom: 1px solid rgba(0,0,0,.12);
     min-height: 9em;
   }
-  .lokkit-logo img,
-  .lokkit-logo span {
-    width: 7em;
+  .lokkit-logo img {
+    width: 60%;
     margin: 0 auto;
     display: block;
   }
