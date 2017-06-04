@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersist from 'vuex-localstorage'
 import Web3 from 'web3'
+import moment from 'moment'
 
 import EthereumRentableService from './services/EthereumRentableService.js'
 
@@ -81,6 +82,48 @@ export const store = new Vuex.Store({
     },
     getAccounts (state) {
       return state.node.accounts
+    },
+    nextReservation (state) {
+      const allReservations = state.currentRentable.reservations
+      for (var i = 0; i < allReservations.length; i++) {
+        const now = moment().unix()
+
+        // exit if reservations are in the past
+        if (allReservations[i].end <= now) {
+          continue
+        }
+
+        // skip reservation that are not mine
+        if (!allReservations[i].renter) { continue }
+
+        // skip reservations that have aready started
+        if (allReservations[i].start <= now) { continue }
+
+        return allReservations[i]
+      }
+      return null
+    },
+    currentReservation (state) {
+      const allReservations = state.currentRentable.reservations
+      for (var i = 0; i < allReservations.length; i++) {
+        const now = moment().unix()
+
+        // exit if reservations are in the past
+        if (allReservations[i].end <= now) {
+          continue
+        }
+
+        // skip reservation that are not mine
+        if (!allReservations[i].renter) { continue }
+
+        // skip reservations that have not started yet
+        if (allReservations[i].start >= now) {
+          return null
+        }
+
+        return allReservations[i]
+      }
+      return null
     }
   },
   mutations: {
@@ -268,9 +311,9 @@ export const store = new Vuex.Store({
         // Send transaction
         rentable.contract.rent(state.activeAccount.address, state.activeAccount.passphrase,
             start, end,
-            (err, args) => {
+            function (err, args) {
               if (err) { reject(args.msg) }
-              resolve(err, args.msg)
+              resolve(args.msg)
             })
       })
     },

@@ -34,7 +34,7 @@
           <md-card-content>
             <div class="card-reservation">
               <md-icon md-iconset="mdi mdi-qrcode"></md-icon>
-              {{ $route.params.address }}
+              <lk-address :address="$route.params.address"/>
             </div>
             <div class="card-reservation">
               <md-icon>location_on</md-icon>
@@ -42,19 +42,10 @@
             </div>
             <div class="card-reservation">
               <md-icon>account_circle</md-icon>
-              {{currentRentable.owner}}
+              <lk-address :address="currentRentable.owner"/>
             </div>
           </md-card-content>
-          <md-card-content>
-            <div class="md-warn">
-              <md-icon class="md-warn">info</md-icon>
-              You are currently not the renter of this rentable
-            </div>
-          </md-card-content>
-          <md-card-actions>
-            <md-button @click.native="lock" class="md-raised md-accent">Lock</md-button>
-            <md-button @click.native="unlock" class="md-raised md-primary">Unlock</md-button>
-          </md-card-actions>
+          <LockUnlockCard />
         </md-card-area>
       </md-card>
 
@@ -133,10 +124,12 @@
 <script>
   import moment from 'moment'
   import {mapGetters} from 'vuex'
+  import lkAddress from './Address.vue'
+  import LockUnlockCard from './LockUnlockCard.vue'
 
   export default {
     name: 'RentableDetails',
-
+    components: {lkAddress, LockUnlockCard},
     methods: {
       openDialog: function (dialog) {
         this.$refs[dialog].open()
@@ -162,14 +155,6 @@
         }).catch((err) => {
           this.waiting = false
           this.$toasted.error(err)
-        })
-      },
-      lock: function () {
-        this.$store.dispatch('lock', {
-        })
-      },
-      unlock: function () {
-        this.$store.dispatch('unlock', {
         })
       }
     },
