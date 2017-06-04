@@ -7,6 +7,37 @@ export default class EthereumRentableService {
   constructor (web3) {
     this.web3 = web3
 
+    // TODO: Pull-reqeust to web3.js
+    this.web3.eth.getTransactionReceiptMined = function (txnHash, interval = 500) {
+      var transactionReceiptAsync
+      transactionReceiptAsync = function (txnHash, resolve, reject) {
+        web3.eth.getTransactionReceipt(txnHash, (error, receipt) => {
+          if (error) {
+            reject(error)
+          } else {
+            if (receipt == null) {
+              setTimeout(function () {
+                transactionReceiptAsync(txnHash, resolve, reject)
+              }, interval)
+            } else {
+              resolve(receipt)
+            }
+          }
+        })
+      }
+      if (Array.isArray(txnHash)) {
+        var promises = []
+        txnHash.forEach(function (oneTxHash) {
+          promises.push(this.web3.eth.getTransactionReceiptMined(oneTxHash, interval))
+        })
+        return Promise.all(promises)
+      } else {
+        return new Promise(function (resolve, reject) {
+          transactionReceiptAsync(txnHash, resolve, reject)
+        })
+      }
+    }
+
     this.rentableContract = this.web3.eth.contract(EthereumRentableService.abi)
 
     this.symmetricKeyAddress = this.web3.shh.addSymmetricKeyFromPassword(EthereumRentableService.symmetricKeyPassword)
@@ -18,7 +49,6 @@ export default class EthereumRentableService {
   }
 
   getNodeInformation () {
-    console.log(this.web3)
     const info = this.web3.version
     return {
       name: info.node,
@@ -45,14 +75,13 @@ export default class EthereumRentableService {
     // FIXME: detect address is a real contract
     // Maybe add a method to the contract to check if it is valid
     // For now we miss use owner() wich retunrs '0x' if invalid address
-    console.log('hehehehhehehehehe', rentable.owner())
     if (rentable.owner() === '0x') {
       throw new Error('The address "' + rentableAddress + '" does not seem to be a valid rentable')
     }
 
     function normalizeReservations (reservations) {
       return reservations.map(item => {
-        return { start: item[0].toNumber(), end: item[1].toNumber() }
+        return { start: item[0].toNumber(), end: item[1].toNumber(), renter: item[2].toNumber() }
       }).sort((a, b) => { return a.start - b.start })
     }
 
@@ -76,23 +105,25 @@ export default class EthereumRentableService {
     }
 
     const rent = function (accountAddress, passphrase, start, end, callback) {
-      var cost = rentable.costInWei(start, end)
+      const cost = rentable.costInWei(start, end)
       if (self.unlock(accountAddress, passphrase)) {
         // TODO: estimate gas and gas price
 
-        console.log('Debug: Start filtering')
-        const filterRentEvents = rentable.OnRent(function (err, result) {
-          filterRentEvents.stopWatching()
-          if (err) {
-            callback(true, result.args)
-            return
-          }
-          const res = result.args
-          res.start = res.start.toNumber()
-          res.end = res.end.toNumber()
-          callback(!result.args.success, res)
+        const tx = rentable.rent.sendTransaction(start, end, { from: accountAddress, gas: '0x50000', gasPrice: '0x6000', value: self.web3.toHex(cost) })
+        self.web3.eth.getTransactionReceiptMined(tx).then(function () {
+          console.log('Debug: Start filtering')
+          const filterRentEvents = rentable.OnRent(function (err, result) {
+            filterRentEvents.stopWatching()
+            if (err) {
+              callback(true, result.args)
+              return
+            }
+            const res = result.args
+            res.start = res.start.toNumber()
+            res.end = res.end.toNumber()
+            callback(!result.args.success, res)
+          })
         })
-        rentable.rent.sendTransaction(start, end, { from: accountAddress, gas: '0x50000', gasPrice: '0x6000', value: self.web3.toHex(cost) })
 
         self.lock(accountAddress)
       } else {
