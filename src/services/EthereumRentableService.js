@@ -108,22 +108,19 @@ export default class EthereumRentableService {
       const cost = rentable.costInWei(start, end)
       if (self.unlock(accountAddress, passphrase)) {
         // TODO: estimate gas and gas price
-
-        const tx = rentable.rent.sendTransaction(start, end, { from: accountAddress, gas: '0x50000', gasPrice: '0x6000', value: self.web3.toHex(cost) })
-        self.web3.eth.getTransactionReceiptMined(tx).then(function () {
-          console.log('Debug: Start filtering')
-          const filterRentEvents = rentable.OnRent(function (err, result) {
-            filterRentEvents.stopWatching()
-            if (err) {
-              callback(true, result.args)
-              return
-            }
-            const res = result.args
-            res.start = res.start.toNumber()
-            res.end = res.end.toNumber()
-            callback(!result.args.success, res)
-          })
+        console.log('Debug: Start filtering')
+        const filterRentEvents = rentable.OnRent(function (err, result) {
+          filterRentEvents.stopWatching()
+          if (err) {
+            callback(true, result.args)
+            return
+          }
+          const res = result.args
+          res.start = res.start.toNumber()
+          res.end = res.end.toNumber()
+          callback(!result.args.success, res)
         })
+        rentable.rent.sendTransaction(start, end, { from: accountAddress, gas: '0x50000', gasPrice: '0x6000', value: self.web3.toHex(cost) })
 
         self.lock(accountAddress)
       } else {
