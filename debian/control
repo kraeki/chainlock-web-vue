@@ -1,0 +1,12 @@
+Source: lokkit-web
+Section: web
+Priority: optional
+Maintainer: Andreas Schmid, <ikeark@gmail.com>
+Build-Depends: nodejs, npm, debhelper (>= 7.4.3)
+Standards-Version: 3.9.1
+
+Package: lokkit-web
+Architecture: all
+Section: web
+Depends: ${misc:Depends}, nginx
+Description: lokkit-web is a DAPP for lokkit rentables

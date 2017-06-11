@@ -38,16 +38,3 @@ module.exports = {
     cssSourceMap: false
   }
 }
-
-// https://github.com/nodejitsu/node-http-proxy#using-https
-httpProxy.createServer({
-  target: 'http://localhost:8080',
-  ssl: {
-    key: fs.readFileSync('./certs/server.key', 'utf8'),
-    cert: fs.readFileSync('./certs/server.crt', 'utf8'),
-    passphrase: 'asdf'
-  },
-  changeOrigin: true,
-  autoRewrite: true,
-  protocolRewrite: 'https'
-}).listen(8000);

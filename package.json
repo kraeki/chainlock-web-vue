@@ -17,7 +17,6 @@
     "material-design-icons": "^3.0.1",
     "mdi": "^1.9.33",
     "moment": "^2.18.1",
-    "nodep": "^0.2.3",
     "qrcode-reader": "^1.0.0",
     "vue": "^2.2.2",
     "vue-material": "^0.7.1",

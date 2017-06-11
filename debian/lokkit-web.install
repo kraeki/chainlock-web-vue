@@ -1,0 +1,5 @@
+#! /usr/bin/dh-exec
+
+var/www/lokkit-web
+etc/nginx/sites-enabled
+etc/ssl
