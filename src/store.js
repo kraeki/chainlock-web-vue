@@ -18,52 +18,13 @@ export const store = new Vuex.Store({
       node: {
         url: 'http://localhost:8545',
         connected: false,
-        blockNumber: 222,
-        version: '1.1.2',
-        accounts: [{
-          address: '0xe0a83a8b5ba5c9acc140f89296187f96a163cf43',
-          default: false
-        }]
+        blockNumber: 0,
+        version: 'x.x.x',
+        accounts: []
       },
       currentRentable: null,
       activeAccount: null,
-      rentables: [{
-        // fields of the contract
-        owner: '0x0001000',
-        description: 'le descpiption',
-        location: 'le location',
-        costPerSecond: 50,
-        deposit: 500,
-        reservations: [{
-          start: 1496100960,
-          end: 1496100960,
-          renter: '0x444444444'
-        }, {
-          start: 1496100960,
-          end: 1496100960,
-          renter: '0x444444444'
-        },
-        {
-          start: 1496100960,
-          end: 1496100960,
-          renter: '0x444444444'
-        }],
-        // additional fields
-        address: '0x111111111',
-        locked: false
-      },
-      {
-        // fields of the contract
-        owner: '0x0002000',
-        description: 'le descpiption 2',
-        location: 'le location 2',
-        costPerSecond: 10,
-        deposit: 100,
-        reservations: [],
-        // additional fields
-        address: '0x111111112',
-        locked: false
-      }]
+      rentables: []
     },
     expires: 7 * 24 * 60 * 30 * 1e3
   })],
