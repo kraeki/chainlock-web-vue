@@ -143,13 +143,9 @@ export const store = new Vuex.Store({
       }
       state.rentables.push(data)
     },
-    lock (state, data) {
-      const rentable = state.rentables.find(o => o.address === data.rentableAddress)
-      rentable.locked = true
-    },
-    unlock (state, data) {
-      const rentable = state.rentables.find(o => o.address === data.rentableAddress)
-      rentable.locked = false
+    changeLockState (state, {rentableAddress, locked}) {
+      const rentable = state.rentables.find(o => o.address === rentableAddress)
+      rentable.locked = locked
     },
     unclaim (state, data) {
     }
@@ -278,11 +274,28 @@ export const store = new Vuex.Store({
             })
       })
     },
-    lock ({commit}, data) {
-      commit('lock', data)
+    lock ({commit, state}) {
+      const rentableAddress = state.currentRentable.address
+      const rentable = state.rentables.find(o => o.address === rentableAddress)
+      console.log('current address: ', rentableAddress)
+
+      // rentableServic.sendCommand(obj.contractAddress, obj.locked ? 'lock' : 'unlock')
+      rentable.contract.sendCommand(
+          state.activeAccount.address,
+          state.activeAccount.passphrase,
+          'lock',
+          rentableAddress)
+      commit('changeLockState', {rentableAddress, locked: true})
     },
-    unlock ({commit}, data) {
-      commit('unlock', data)
+    unlock ({commit, state}) {
+      const rentableAddress = state.currentRentable.address
+      const rentable = state.rentables.find(o => o.address === rentableAddress)
+      rentable.contract.sendCommand(
+          state.activeAccount.address,
+          state.activeAccount.passphrase,
+          'unlock',
+          rentableAddress)
+      commit('changeLockState', {rentableAddress, locked: false})
     },
     unclaim ({commit}, data) {
       commit('unclaim', data)

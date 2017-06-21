@@ -34,12 +34,10 @@
     components: {},
     methods: {
       lock: function () {
-        this.$store.dispatch('lock', {
-        })
+        this.$store.dispatch('lock')
       },
       unlock: function () {
-        this.$store.dispatch('unlock', {
-        })
+        this.$store.dispatch('unlock')
       },
       updateComingUp () {
         const r = this.nextReservation

@@ -132,13 +132,21 @@ export default class EthereumRentableService {
       return rentable.reservedBetween(start, end)
     }
 
-    const sendCommand = function (rentableAddress, command) {
+    function sign (accountAddress, passphrase, bytes) {
+      self.unlock(accountAddress, passphrase)
+      var digest = self.web3.eth.sign(accountAddress, bytes)
+      self.lock(accountAddress)
+      return digest
+    }
+
+    const sendCommand = function (accountAddress, passphrase, rentableAddress, command) {
       const message = { 'command': command, 'key': self.publicKey, 'rentableAddress': rentableAddress } // IMPORTANT: alphabetical order to ensure consistency when using ecRecover!
       const messageBytes = self.web3.fromAscii(JSON.stringify(message))
-      const digest = self.sign(messageBytes)
+      const digest = sign(accountAddress, passphrase, messageBytes)
       const payload = self.web3.fromAscii(JSON.stringify({ 'digest': digest, 'message': message }))
       const topic = self.web3.sha3(rentableAddress).substr(0, 10)
 
+      console.log('DEBUG: sendCommand: Posting whisper message')
       self.web3.shh.post({
         'type': 'sym',
         'ttl': 20,
@@ -149,6 +157,7 @@ export default class EthereumRentableService {
         'sig': self.asymmetricKeyAddress,
         'payload': payload
       })
+      console.log('DEBUG: sendCommand: whisper message sent', message)
     }
 
     return {
@@ -181,12 +190,4 @@ export default class EthereumRentableService {
   lock (accountAddress) {
     this.web3.personal.lockAccount(accountAddress)
   }
-
-  sign (accountAddress, passphrase, bytes) {
-    this.unlock(accountAddress, passphrase)
-    var digest = this.web3.eth.sign(accountAddress, bytes)
-    this.lock(accountAddress)
-    return digest
-  }
-
 }
