@@ -146,8 +146,6 @@ export const store = new Vuex.Store({
     changeLockState (state, {rentableAddress, locked}) {
       const rentable = state.rentables.find(o => o.address === rentableAddress)
       rentable.locked = locked
-    },
-    unclaim (state, data) {
     }
   },
   actions: {
@@ -274,6 +272,23 @@ export const store = new Vuex.Store({
             })
       })
     },
+    unclaim ({state}) {
+      const rentableAddress = state.currentRentable.address
+      return new Promise((resolve, reject) => {
+        const rentable = state.rentables.find(o => o.address === rentableAddress)
+        if (rentable == null) {
+          reject('Rentable with address "' + rentableAddress + '" not found')
+        }
+
+        // Send transaction
+        rentable.contract.unclaim(state.activeAccount.address, state.activeAccount.passphrase,
+            function (err, args) {
+              if (err) { reject(args.msg) }
+              resolve(args.msg)
+            })
+        resolve('Successfully unclaimed')
+      })
+    },
     lock ({commit, state}) {
       const rentableAddress = state.currentRentable.address
       const rentable = state.rentables.find(o => o.address === rentableAddress)
@@ -296,9 +311,6 @@ export const store = new Vuex.Store({
           'unlock',
           rentableAddress)
       commit('changeLockState', {rentableAddress, locked: false})
-    },
-    unclaim ({commit}, data) {
-      commit('unclaim', data)
     }
   }
 })

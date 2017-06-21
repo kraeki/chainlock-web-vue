@@ -17,6 +17,7 @@
         </div>
       </md-card-content>
       <md-card-actions v-if="currentReservation != null">
+        <md-button @click.native="unclaim" class="">Unclaim</md-button>
         <span style="flex: 1"></span>
         <md-button @click.native="lock" class="md-raised md-accent">Lock</md-button>
         <md-button @click.native="unlock" class="md-raised md-primary">Unlock</md-button>
@@ -38,6 +39,10 @@
       },
       unlock: function () {
         this.$store.dispatch('unlock')
+      },
+      unclaim: function () {
+        // TODO: ask for confirmation
+        this.$store.dispatch('unclaim')
       },
       updateComingUp () {
         const r = this.nextReservation

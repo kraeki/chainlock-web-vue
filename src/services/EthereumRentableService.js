@@ -128,6 +128,15 @@ export default class EthereumRentableService {
       }
     }
 
+    const unclaim = function (accountAddress, passphrase, callback) {
+      if (self.unlock(accountAddress, passphrase)) {
+        rentable.unclaim.sendTransaction({ from: accountAddress, gas: '0x50000', gasPrice: '0x6000' })
+        self.lock(accountAddress)
+      } else {
+        throw new Error('Could not send transaction')
+      }
+    }
+
     const reservedBetween = function (start, end) {
       return rentable.reservedBetween(start, end)
     }
@@ -170,6 +179,7 @@ export default class EthereumRentableService {
       reservations: normalizeReservations(rentable.allReservations()),
 
       rent,
+      unclaim,
       reservedBetween,
       sendCommand,
       startListeningForNewRents,
