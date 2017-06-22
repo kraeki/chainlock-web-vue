@@ -127,7 +127,9 @@ export const store = new Vuex.Store({
       // deactivate current account if available
       if (state.activeAccount) {
         const currentAccount = state.node.accounts.find(o => o.address === state.activeAccount.address)
-        currentAccount.default = false
+        if (currentAccount != null) {
+          currentAccount.default = false
+        }
       }
 
       // set new active account
