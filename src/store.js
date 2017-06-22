@@ -300,8 +300,8 @@ export const store = new Vuex.Store({
       rentable.contract.sendCommand(
           state.activeAccount.address,
           state.activeAccount.passphrase,
-          'lock',
-          rentableAddress)
+          rentableAddress,
+          'lock')
       commit('changeLockState', {rentableAddress, locked: true})
     },
     unlock ({commit, state}) {
@@ -310,8 +310,8 @@ export const store = new Vuex.Store({
       rentable.contract.sendCommand(
           state.activeAccount.address,
           state.activeAccount.passphrase,
-          'unlock',
-          rentableAddress)
+          rentableAddress,
+          'unlock')
       commit('changeLockState', {rentableAddress, locked: false})
     }
   }
