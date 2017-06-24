@@ -8,5 +8,5 @@ Standards-Version: 3.9.1
 Package: lokkit-web
 Architecture: all
 Section: web
-Depends: ${misc:Depends}, nginx
+Depends: ${misc:Depends}, nginx-light
 Description: lokkit-web is a DAPP for lokkit rentables
