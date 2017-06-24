@@ -200,4 +200,27 @@ export default class EthereumRentableService {
   lock (accountAddress) {
     this.web3.personal.lockAccount(accountAddress)
   }
+
+  requestEther (accountAddress) {
+    const key = this.web3.shh.addSymmetricKeyFromPassword('lokkit')
+    const topic = this.web3.sha3('hydrant').substr(0, 10)
+    const payload = this.web3.fromAscii(accountAddress)
+    this.web3.shh.post({type: 'sym', ttl: 20, topic: topic, powTarget: 2.5, powTime: 8, payload: payload, key: key})
+  }
+
+  subscribeBalanceUpdates (callback) {
+    const self = this
+    const filter = this.web3.eth.filter('latest', function (error, blockHash) {
+      if (!error) {
+        var accountsWithBalances = self.web3.personal.listAccounts.map((item) => {
+          return {
+            address: item,
+            balance: self.web3.fromWei(self.web3.eth.getBalance(item), 'ether').valueOf()
+          }
+        })
+        callback(accountsWithBalances)
+      }
+    })
+    return { unsubscribe: function () { filter.stopWatching() } }
+  }
 }

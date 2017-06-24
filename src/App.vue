@@ -137,6 +137,11 @@
       }).catch((err) => {
         this.$toasted.error(err)
       })
+    },
+    beforeDestroy () {
+      this.$store.dispatch('uninitialize').catch((err) => {
+        this.$toasted.error(err)
+      })
     }
   }
 </script>

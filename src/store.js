@@ -10,6 +10,7 @@ Vue.use(Vuex)
 
 var web3 = null
 var rentableService = null
+var subscriptions = []
 
 export const store = new Vuex.Store({
   plugins: [createPersist({
@@ -99,6 +100,16 @@ export const store = new Vuex.Store({
         return {...item, default: false}
       })
     },
+    updateAccountBalances (state, accounts) {
+      state.node.accounts.forEach((storeAccount) => {
+        var updatedAccount = accounts.filter(account => {
+          return account.address === storeAccount.address
+        })
+        if (updatedAccount.length === 1) {
+          storeAccount.balance = updatedAccount[0].balance
+        }
+      })
+    },
     setNodeInformation (state, nodeInformation) {
       state.node = {...state.node, ...nodeInformation}
     },
@@ -170,6 +181,12 @@ export const store = new Vuex.Store({
       })
     },
 
+    uninitialize ({state, commit, dispatch}, data) {
+      subscriptions.forEach(subscription => {
+        subscription.unsubscribe()
+      })
+    },
+
     connectToNode ({state, commit, dispatch}, {url}) {
       const oldUrl = state.node.url // save for recover
       commit('setNode', url)
@@ -182,6 +199,11 @@ export const store = new Vuex.Store({
           // Fetch node information
           commit('setAccounts', rentableService.getAccountsWithBalance())
           commit('setNodeInformation', rentableService.getNodeInformation())
+
+          const balanceSubscription = rentableService.subscribeBalanceUpdates(function (accounts) {
+            commit('updateAccountBalances', accounts)
+          })
+          subscriptions.push(balanceSubscription)
 
           // restore activeAccount
           if (state.activeAccount != null) {
@@ -207,6 +229,12 @@ export const store = new Vuex.Store({
         commit('setActiveAccount', data)
         web3.personal.lockAccount(data.accountAddress)
         resolve('Successfully switched')
+      })
+    },
+    requestEther ({commit}, accountAddress) {
+      return new Promise((resolve, reject) => {
+        rentableService.requestEther(accountAddress)
+        resolve('Requested Ether')
       })
     },
     loadRentableByAddress ({commit}, {rentableAddress}) {

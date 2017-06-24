@@ -10,7 +10,10 @@
         </md-avatar>
         <div class="md-list-text-container">
           <span>{{account.address}}</span>
-          <p>
+          <md-button class="md-accent md-raised" v-if="account.balance < 10" @click.native="requestEther(account.address)">
+            REQUEST ETHER
+          </md-button>
+          <p v-else>
             Ξ {{account.balance}}
           </p>
         </div>
@@ -53,7 +56,8 @@ export default {
   props: {},
   components: {},
   computed: mapGetters({
-    accounts: 'getAccounts'
+    accounts: 'getAccounts',
+    requestingEther: 'getRequestingEther'
   }),
   methods: {
     openPassphraseDialog (accountAddress) {
@@ -71,6 +75,11 @@ export default {
         this.$refs.passphraseDialog.close()
       }).catch((err) => {
         this.$toasted.error(err)
+      })
+    },
+    requestEther (accountAddress) {
+      this.$store.dispatch('requestEther', accountAddress).then((msg) => {
+        this.$toasted.success(msg)
       })
     }
   },
