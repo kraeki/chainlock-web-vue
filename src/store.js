@@ -298,8 +298,7 @@ export const store = new Vuex.Store({
         rentable.contract.rent(state.activeAccount.address, state.activeAccount.passphrase,
             start, end,
             function (err, args) {
-              if (err) { reject(args.msg) }
-              resolve(args.msg)
+              if (err) { reject(args.msg) } else { resolve(args.msg) }
             })
       })
     },
