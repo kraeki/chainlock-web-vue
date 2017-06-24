@@ -110,6 +110,7 @@ export default class EthereumRentableService {
         // TODO: estimate gas and gas price
         console.log('Debug: Start filtering')
         const filterRentEvents = rentable.OnRent(function (err, result) {
+          console.log('Debug: got an OnRent event!\n' + JSON.stringify(err) + '\n' + JSON.stringify(result))
           filterRentEvents.stopWatching()
           if (err) {
             callback(true, result.args)
