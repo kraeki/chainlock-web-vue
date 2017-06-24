@@ -10,3 +10,4 @@ selenium-debug.log
 
 # Editor
 *.swp
+.vscode
