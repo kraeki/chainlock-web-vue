@@ -18,10 +18,15 @@
       this.up = true // to control decode loop
 
       // try get the back facing camera. using "options=true" will start the default camera (front on mobile devices)
-      var options = true
       var self = this // trap this in promise closure
       navigator.mediaDevices.enumerateDevices()
       .then(function (devices) {
+        var options
+        if (devices.length === 1) {
+          options = true
+        } else {
+          options = {'facingMode': 'environment'}
+        }
         devices.forEach(function (device) {
           if (device.kind === 'videoinput') {
             console.log('Debug: found camera: ' + device.label + ' (id: ' + device.deviceId + ')')
