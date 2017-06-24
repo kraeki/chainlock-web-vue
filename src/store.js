@@ -182,9 +182,6 @@ export const store = new Vuex.Store({
     },
 
     uninitialize ({state, commit, dispatch}, data) {
-      subscriptions.forEach(subscription => {
-        subscription.unsubscribe()
-      })
     },
 
     connectToNode ({state, commit, dispatch}, {url}) {
@@ -200,6 +197,10 @@ export const store = new Vuex.Store({
           commit('setAccounts', rentableService.getAccountsWithBalance())
           commit('setNodeInformation', rentableService.getNodeInformation())
 
+          subscriptions.forEach(subscription => {
+            subscription.unsubscribe()
+          })
+          subscriptions = []
           const balanceSubscription = rentableService.subscribeBalanceUpdates(function (accounts) {
             commit('updateAccountBalances', accounts)
           })
