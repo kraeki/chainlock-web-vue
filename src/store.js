@@ -107,6 +107,9 @@ export const store = new Vuex.Store({
         })
         if (updatedAccount.length === 1) {
           storeAccount.balance = updatedAccount[0].balance
+          if (state.activeAccount && state.activeAccount.address === updatedAccount[0].address) {
+            state.activeAccount.balance = updatedAccount[0].balance
+          }
         }
       })
     },
@@ -164,7 +167,6 @@ export const store = new Vuex.Store({
   actions: {
     initialize ({state, commit, dispatch}, data) {
       const url = state.node.url
-      console.log('Debug: initialization: ', url, state.node, 'activeAccount:', state.activeAccount)
       return new Promise((resolve, reject) => {
         return dispatch('connectToNode', {url}).then((result) => {
           // restore activeAccount

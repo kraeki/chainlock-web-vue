@@ -7,42 +7,9 @@ export default class EthereumRentableService {
   constructor (web3) {
     this.web3 = web3
 
-    // TODO: Pull-reqeust to web3.js
-    this.web3.eth.getTransactionReceiptMined = function (txnHash, interval = 500) {
-      var transactionReceiptAsync
-      transactionReceiptAsync = function (txnHash, resolve, reject) {
-        web3.eth.getTransactionReceipt(txnHash, (error, receipt) => {
-          if (error) {
-            reject(error)
-          } else {
-            if (receipt == null) {
-              setTimeout(function () {
-                transactionReceiptAsync(txnHash, resolve, reject)
-              }, interval)
-            } else {
-              resolve(receipt)
-            }
-          }
-        })
-      }
-      if (Array.isArray(txnHash)) {
-        var promises = []
-        txnHash.forEach(function (oneTxHash) {
-          promises.push(this.web3.eth.getTransactionReceiptMined(oneTxHash, interval))
-        })
-        return Promise.all(promises)
-      } else {
-        return new Promise(function (resolve, reject) {
-          transactionReceiptAsync(txnHash, resolve, reject)
-        })
-      }
-    }
-
     this.rentableContract = this.web3.eth.contract(EthereumRentableService.abi)
-
     this.symmetricKeyAddress = this.web3.shh.addSymmetricKeyFromPassword(EthereumRentableService.symmetricKeyPassword)
     this.symmetricKey = this.web3.shh.getSymmetricKey(this.symmetricKeyAddress)
-
     this.asymmetricKeyAddress = this.web3.shh.newKeyPair()
     this.publicKey = this.web3.shh.getPublicKey(this.asymmetricKeyAddress)
     this.privateKey = this.web3.shh.getPrivateKey(this.asymmetricKeyAddress)
@@ -108,9 +75,7 @@ export default class EthereumRentableService {
       const cost = rentable.costInWei(start, end)
       if (self.unlock(accountAddress, passphrase)) {
         // TODO: estimate gas and gas price
-        console.log('Debug: Start filtering')
         const filterRentEvents = rentable.OnRent(function (err, result) {
-          console.log('Debug: got an OnRent event!\n' + JSON.stringify(err) + '\n' + JSON.stringify(result))
           filterRentEvents.stopWatching()
           if (err) {
             callback(true, result.args)
@@ -121,7 +86,7 @@ export default class EthereumRentableService {
           res.end = res.end.toNumber()
           callback(!result.args.success, res)
         })
-        
+
         rentable.rent.sendTransaction(start, end, { from: accountAddress, gas: '0x50000', gasPrice: '0x100000000', value: self.web3.toHex(cost) })
 
         self.lock(accountAddress)

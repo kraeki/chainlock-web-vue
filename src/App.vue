@@ -36,7 +36,7 @@
               <md-icon class="md-accent md-size-2x">account_circle</md-icon>
               <div class="md-list-text-container">
                 <lk-address :address="activeAccount.address" />
-                <span>Ξ {{activeAccount.balance}}</span>
+                <span>Ξ {{parseFloat(activeAccount.balance).toFixed(4)}}</span>
               </div>
               <md-button @click.native="toggleAccountsList" class="md-icon-button md-list-action">
                 <md-icon v-if="showAccountsList">arrow_drop_up</md-icon>

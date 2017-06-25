@@ -10,11 +10,11 @@
         </md-avatar>
         <div class="md-list-text-container">
           <span>{{account.address}}</span>
-          <md-button class="md-accent md-raised" v-if="account.balance < 10" @click.native="requestEther(account.address)">
+          <md-button class="md-accent md-raised" v-if="parseFloat(account.balance) < 10" @click.native="requestEther(account.address)">
             REQUEST ETHER
           </md-button>
           <p v-else>
-            Ξ {{account.balance}}
+            Ξ {{parseFloat(account.balance).toFixed(4)}}
           </p>
         </div>
         <md-button @click.native="openPassphraseDialog(account.address)" :value="account.address" class="md-icon-button md-list-action">
