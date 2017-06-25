@@ -135,6 +135,10 @@ export default class EthereumRentableService {
       console.log('DEBUG: sendCommand: whisper message sent', message)
     }
 
+    const getAllReservations = function (accountAddress) {
+      return normalizeReservations(rentable.allReservations({from: accountAddress}))
+    }
+
     return {
       rentableAddress,
       owner: rentable.owner(),
@@ -142,7 +146,7 @@ export default class EthereumRentableService {
       location: rentable.location(),
       costPerSecond: rentable.costPerSecond(),
       deposit: rentable.deposit(),
-      reservations: normalizeReservations(rentable.allReservations()),
+      reservations: getAllReservations,
 
       rent,
       unclaim,

@@ -240,7 +240,7 @@ export const store = new Vuex.Store({
         resolve('Requested Ether')
       })
     },
-    loadRentableByAddress ({commit}, {rentableAddress}) {
+    loadRentableByAddress ({commit, state}, {rentableAddress}) {
       return new Promise((resolve, reject) => {
         // this thows an error if rentableAddress is not valid
         const rentable = rentableService.createRentableFromAddress(rentableAddress)
@@ -261,7 +261,7 @@ export const store = new Vuex.Store({
           location: rentable.location,
           costPerSecond: rentable.costPerSecond,
           deposit: rentable.deposit,
-          reservations: rentable.reservations
+          reservations: rentable.reservations(state.activeAccount.address)
         })
         resolve('Rentable successfully loaded')
       })
@@ -283,7 +283,7 @@ export const store = new Vuex.Store({
         location: r.location,
         costPerSecond: r.costPerSecond,
         deposit: r.deposit,
-        reservations: r.allReservations
+        reservations: r.allReservations(this.getter.ativeAccount().address)
       })
     },
     reserve ({state}, {rentableAddress, start, end}) {
