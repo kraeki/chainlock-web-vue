@@ -121,7 +121,8 @@ export default class EthereumRentableService {
           res.end = res.end.toNumber()
           callback(!result.args.success, res)
         })
-        rentable.rent.sendTransaction(start, end, { from: accountAddress, gas: '0x50000', gasPrice: '0x6000', value: self.web3.toHex(cost) })
+        
+        rentable.rent.sendTransaction(start, end, { from: accountAddress, gas: '0x50000', gasPrice: '0x100000000', value: self.web3.toHex(cost) })
 
         self.lock(accountAddress)
       } else {
