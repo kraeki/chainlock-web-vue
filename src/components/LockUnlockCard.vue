@@ -5,7 +5,7 @@
         <h3 class="md-subheading">Action</h3>
         <div v-if="currentReservation != null">
           <md-icon class="md-accent">info</md-icon>
-          Your ownerchip will end <md-chip>{{endingIn}}</md-chip>.
+          Your ownership will end <md-chip>{{endingIn}}</md-chip>.
         </div>
         <div v-else>
             <md-icon class="md-warn">info</md-icon>
