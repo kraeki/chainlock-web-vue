@@ -96,7 +96,18 @@ export default class EthereumRentableService {
 
     const unclaim = function (accountAddress, passphrase, callback) {
       if (self.unlock(accountAddress, passphrase)) {
-        rentable.unclaim.sendTransaction({ from: accountAddress, gas: '0x50000', gasPrice: '0x6000' })
+          const filterUnclaimEvents = rentable.OnUnclaim(function (err, result) {
+          filterUnclaimEvents.stopWatching()
+          if (err) {
+            callback(true, result.args)
+            return
+          }
+          const res = result.args
+          res.start = res.start.toNumber()
+          res.end = res.end.toNumber()
+          callback(false, res)
+        })
+        rentable.unclaim.sendTransaction({ from: accountAddress, gas: '0x50000', gasPrice: '0x100000000' })
         self.lock(accountAddress)
       } else {
         throw new Error('Could not send transaction')

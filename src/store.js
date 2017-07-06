@@ -315,10 +315,13 @@ export const store = new Vuex.Store({
         // Send transaction
         rentable.contract.unclaim(state.activeAccount.address, state.activeAccount.passphrase,
             function (err, args) {
-              if (err) { reject(args.msg) }
-              resolve(args.msg)
+              if (err) {
+                reject('Could not unclaim rentable: ' + JSON.stringify(err))
+              } else {
+                //resolve(args.msg)
+                resolve('Successfully unclaimed')
+              }
             })
-        resolve('Successfully unclaimed')
       })
     },
     lock ({commit, state}) {
