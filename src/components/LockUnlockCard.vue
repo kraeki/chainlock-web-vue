@@ -41,7 +41,6 @@
         this.$store.dispatch('unlock')
       },
       unclaim: function () {
-        // TODO: ask for confirmation
         this.$store.dispatch('unclaim')
       },
       updateComingUp () {
