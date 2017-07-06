@@ -291,11 +291,11 @@ export const store = new Vuex.Store({
         const rentable = state.rentables.find(o => o.address === rentableAddress)
         if (rentable == null) {
           reject('Rentable with address "' + rentableAddress + '" not found')
-          return;
+          return
         }
         if (rentable.contract.reservedBetween(start, end)) {
           reject('There is already a reservation conflicting to this one')
-          return;
+          return
         }
 
         // Send transaction
@@ -312,15 +312,16 @@ export const store = new Vuex.Store({
         const rentable = state.rentables.find(o => o.address === rentableAddress)
         if (rentable == null) {
           reject('Rentable with address "' + rentableAddress + '" not found')
+          return
         }
 
         // Send transaction
         rentable.contract.unclaim(state.activeAccount.address, state.activeAccount.passphrase,
             function (err, args) {
+              console.log('store: unclaim callback')
               if (err) {
-                reject('Could not unclaim rentable: ' + JSON.stringify(err))
+                reject('Could not unclaim rentable.')
               } else {
-                // resolve(args.msg)
                 resolve('Successfully unclaimed')
               }
             })
